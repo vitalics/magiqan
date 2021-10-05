@@ -1,0 +1,35 @@
+[
+  {
+    "path": "/Users/vitaliharadkou/Documents/git/magiqan/examples/src/testFile.ts",
+    "results": [
+      {
+        "instance": {},
+        "name": "SomeTest",
+        "result": "passed",
+        "results": [
+          {
+            "start": 1633443547587,
+            "result": "passed",
+            "attachments": [],
+            "labels": [],
+            "name": "beforeAll",
+            "stop": 1633443547590,
+            "isHook": true,
+            "kind": "beforeAll"
+          },
+          {
+            "kind": "test",
+            "name": "someTest",
+            "start": 1633443547591,
+            "isHook": false,
+            "result": "passed",
+            "stop": 1633443547592
+          }
+        ],
+        "start": 1633443547586,
+        "stop": 1633443547592
+      }
+    ],
+    "result": "passed"
+  }
+]

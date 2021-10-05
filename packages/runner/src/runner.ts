@@ -1,6 +1,5 @@
 import { resolve } from 'path';
 import { types, promisify } from 'util';
-import { performance } from 'perf_hooks';
 
 import 'reflect-metadata';
 import glob = require('glob');
@@ -150,7 +149,7 @@ export class Runner implements RunnerLike {
       name: ctor.name,
       result: 'pending',
       results: [],
-      start: performance.now(),
+      start: Date.now(),
     };
     const classTest: ClassTest = {
       ctor,
@@ -167,7 +166,7 @@ export class Runner implements RunnerLike {
       return await this.runClassTest(ctor, test.name as keyof Internal.Ctor);
     }));
     const afterAllResults = await this._runHooks(mergedTest, 'afterAll');
-    result.stop = performance.now();
+    result.stop = Date.now();
     result.results.push(...[...beforeAllResults, ...results, ...afterAllResults]);
 
     const isAnyHookFailed =
@@ -218,7 +217,7 @@ export class Runner implements RunnerLike {
     const result: TestResult = {
       kind: 'test',
       name: findedTest.name,
-      start: performance.now(),
+      start: Date.now(),
       isHook: false,
       result: 'pending',
     };
@@ -284,7 +283,7 @@ export class Runner implements RunnerLike {
       result.hooks?.push(...afterEachResults)
     }
 
-    result.stop = performance.now();
+    result.stop = Date.now();
 
     if (isHaveHooks) {
       const isSomeHookFailed = result.hooks!.some(h => h.result === 'failed');
@@ -309,7 +308,7 @@ export class Runner implements RunnerLike {
     const hookRunResult: TestResult[] = await Promise.all(runnedHooks.map(async h => {
       events.emit('classHook', this, classTest, h);
       const result = await this._runFunction.call(isntance, h.fn!);
-      const hookResult = { ...result, isHook: true, name: h.name, kind: h.kind, stop: performance.now(), };
+      const hookResult = { ...result, isHook: true, name: h.name, kind: h.kind, stop: Date.now(), };
       events.emit('classMethodResult', this, classTest, h, hookResult);
       // const attachments: { name: string, attachment: Attachment }[] = Reflect.getMetadata(METADATA_ATTACHMENT_KEY, isntance as object)
       return { ...hookResult, name: h.name };
@@ -318,18 +317,18 @@ export class Runner implements RunnerLike {
     return result;
   }
   private _runFunction(this: any, fn: Function, ...args: any[]): Promise<TestResult> {
-    const result = { start: performance.now(), result: 'pending', attachments: [], labels: [], name: '', } as TestResult;
+    const result = { start: Date.now(), result: 'pending', attachments: [], labels: [], name: '', } as TestResult;
     return Promise.race<TestResult>([
       Reflect.apply(fn, this || null, args),
       delay(Runner.timeout),
     ]).then(() => {
-      return { ...result, result: 'passed', name: fn.name, stop: performance.now() } as TestResult;
+      return { ...result, result: 'passed', name: fn.name, stop: Date.now() } as TestResult;
     }).catch(error => {
       if (types.isNativeError(error) || typeof error === 'string') {
         console.error(error);
-        return { ...result, result: 'failed', error, name: fn.name, stop: performance.now() };
+        return { ...result, result: 'failed', error, name: fn.name, stop: Date.now() };
       }
-      return { ...result, result: 'failed', error: new Error('unknown error occured'), name: fn.name, isHook: false, stop: performance.now(), };
+      return { ...result, result: 'failed', error: new Error('unknown error occured'), name: fn.name, isHook: false, stop: Date.now(), };
     });
   }
   private _constructInstanceIfNeeded<R>(ctor: Internal.Ctor<R>): R {

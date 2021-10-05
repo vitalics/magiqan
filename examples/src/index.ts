@@ -9,7 +9,7 @@ export async function run() {
   runner.addFile('./testFile.ts');
   await runner.run();
 
-  await reporter.generate('out.json');
+  await reporter.generate('./examples/out.json');
 }
 
 run();
