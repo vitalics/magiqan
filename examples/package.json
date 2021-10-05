@@ -1,0 +1,19 @@
+{
+  "name": "examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "node -r ts-node/register src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@magiqan/cli": "file:../packages/cli",
+    "@magiqan/core": "file:../packages/core",
+    "@magiqan/reporter": "file:../packages/reporter",
+    "@magiqan/runner": "file:../packages/runner",
+    "typescript": "^4.4.3"
+  }
+}

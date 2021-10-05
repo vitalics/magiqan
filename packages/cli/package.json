@@ -1,0 +1,33 @@
+{
+  "name": "@magiqan/cli",
+  "version": "1.0.0",
+  "description": "Cli",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/magiqans/jest.git",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": "./build/index.js",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@magiqan/reporter": "file:../reporter",
+    "@magiqan/runner": "file:../runner",
+    "yargs": "^17.2.1"
+  },
+  "devDependencies": {
+    "@types/yargs": "^17.0.3"
+  }
+}

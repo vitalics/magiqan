@@ -1,0 +1,20 @@
+{
+  "name": "@magiqan/constants",
+  "version": "0.0.0",
+  "description": "Constants",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/magiqans/jest.git",
+    "directory": "packages/constants"
+  },
+  "license": "MIT",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": "./build/index.js",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
