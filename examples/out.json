@@ -8,26 +8,30 @@
         "result": "passed",
         "results": [
           {
-            "start": 1633443547587,
+            "start": 1633522634149,
             "result": "passed",
-            "attachments": [],
-            "labels": [],
             "name": "beforeAll",
-            "stop": 1633443547590,
+            "stop": 1633522634152,
             "isHook": true,
             "kind": "beforeAll"
           },
           {
             "kind": "test",
             "name": "someTest",
-            "start": 1633443547591,
+            "start": 1633522634152,
             "isHook": false,
             "result": "passed",
-            "stop": 1633443547592
+            "metadata": {
+              "metadataValue": {
+                "key": "value"
+              }
+            },
+            "stop": 1633522658385
           }
         ],
-        "start": 1633443547586,
-        "stop": 1633443547592
+        "start": 1633522634149,
+        "metadata": {},
+        "stop": 1633522658385
       }
     ],
     "result": "passed"

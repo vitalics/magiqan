@@ -2,6 +2,9 @@
   "name": "@magiqan/constants",
   "version": "0.0.0",
   "description": "Constants",
+  "scripts": {
+    "build": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/magiqans/magiqan.git",

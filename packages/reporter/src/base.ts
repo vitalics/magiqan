@@ -1,5 +1,10 @@
 import events from '@magiqan/events';
-import type { ClassResult, ClassTest, FileResult, FileTest, RunnerLike, Test, TestResult } from '@magiqan/types';
+import type {
+  ClassResult, ClassTest,
+  FileResult, FileTest,
+  Test, TestResult,
+  RunnerLike,
+} from '@magiqan/types';
 
 export abstract class Reporter {
 
@@ -16,7 +21,7 @@ export abstract class Reporter {
    */
   abstract generate(outFile: string): Promise<void>;
 
-  constructor() {
+  constructor(runner: RunnerLike) {
     events.subscribe('fileResult', (_runner, result) => {
       this._results.push(result);
     });
@@ -31,4 +36,10 @@ export abstract class Reporter {
   onClassResult(_result: ClassResult, _cls: ClassTest, _runner: RunnerLike): void { };
   onTestRun(_test: Test, _cls: ClassTest, _runner: RunnerLike) { }
   onTestResult(_result: TestResult, _test: Test, _cls: ClassTest, _runner: RunnerLike) { }
+  onTestMetadataAttached(_test: Test, _metadata: Test['metadata']) { }
+
+  addMetadata(test: Test, metadata: Test['metadata']) {
+    // events.emit('classMethodMetadata',)
+    // test.metadata = metadata;
+  }
 }

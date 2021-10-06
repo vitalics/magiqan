@@ -2,6 +2,9 @@
   "name": "@magiqan/core",
   "description": "Core",
   "version": "0.0.0",
+  "scripts": {
+    "build": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/magiqans/magiqan.git",
@@ -19,6 +22,8 @@
   },
   "dependencies": {
     "@magiqan/constants": "file:../constants",
+    "@magiqan/events": "file:../events",
+    "@magiqan/runtime": "file:../runtime",
     "@magiqan/types": "file:../types"
   }
 }

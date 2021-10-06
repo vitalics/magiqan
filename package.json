@@ -7,7 +7,15 @@
   ],
   "scripts": {
     "start": "node -e 'console.log(`Hello`)'",
-    "build": "tsc"
+    "build": "npm run build:constants & npm run build:types & npm run build:core & npm run build:events & npm run build:errors & npm run build:reporter & npm run build:runner & npm run build:cli",
+    "build:cli": "npm run build --prefix packages/cli",
+    "build:constants": "npm run build --prefix packages/constants",
+    "build:core": "npm run build --prefix packages/core",
+    "build:errors": "npm run build --prefix packages/errors",
+    "build:events": "npm run build --prefix packages/events",
+    "build:reporter": "npm run build --prefix packages/reporter",
+    "build:runner": "npm run build --prefix packages/runner",
+    "build:types": "npm run build --prefix packages/types"
   },
   "engines": {
     "node": "^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0"

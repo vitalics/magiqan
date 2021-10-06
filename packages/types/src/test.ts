@@ -1,5 +1,7 @@
 import type { Status, Kind } from '@magiqan/constants';
 
+export type Hook = Omit<Test, 'hooks'>;
+
 export type Test = {
   kind: TestKind;
   fn: Function,
@@ -7,7 +9,8 @@ export type Test = {
   name: string | symbol;
   data?: any[],
   isHook: boolean;
-  hooks?: Test[];
+  hooks?: Hook[];
+  metadata?: Record<string, unknown>;
 }
 
 export type TestKind = Kind;
@@ -21,4 +24,5 @@ export type Result = Record<string, unknown> & {
   hooks?: Result[];
   start?: number;
   stop?: number;
+  metadata?: Record<string, unknown>;
 };
