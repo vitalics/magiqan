@@ -1,3 +1,5 @@
+import type { Status, Kind } from '@magiqan/constants';
+
 export type Test = {
   kind: TestKind;
   fn: Function,
@@ -8,8 +10,8 @@ export type Test = {
   hooks?: Test[];
 }
 
-export type TestKind = 'test' | 'beforeAll' | 'beforeEach' | 'afterAll' | 'afterEach'
-export type ResultKind = 'passed' | 'failed' | 'skipped' | 'broken' | 'pending';
+export type TestKind = Kind;
+export type ResultKind = Status;
 export type Result = Record<string, unknown> & {
   result: ResultKind;
   kind?: TestKind;

@@ -14,8 +14,9 @@ import type {
   FileTest,
 } from '@magiqan/types';
 import {
-  METADATA_CLASS_KEY,
-  METADATA_INSTANCE_KEY,
+  metadata,
+  Kind,
+  Status,
 } from '@magiqan/constants';
 import { events } from '@magiqan/events';
 
@@ -81,14 +82,14 @@ export class Runner implements RunnerLike {
     const fileResult: FileResult = {
       path: resolved,
       results: [],
-      result: 'pending',
+      result: Status.PENDING,
     };
     const classTests: (ClassTest | undefined)[] = await Promise.all(Object.entries(imported).map(async ([, value]) => {
       if (
         typeof value === 'function' &&
-        Reflect.hasMetadata(METADATA_CLASS_KEY, value.prototype)
+        Reflect.hasMetadata(metadata.CLASS_KEY, value.prototype)
       ) {
-        return Reflect.getMetadata(METADATA_CLASS_KEY, value.prototype) as ClassTest;
+        return Reflect.getMetadata(metadata.CLASS_KEY, value.prototype) as ClassTest;
       } else {
         return;
       }
@@ -117,15 +118,15 @@ export class Runner implements RunnerLike {
     const isSomeTestClassFailed = results.some(r => r.result === 'failed');
     const isSomeTestClassBroken = results.some(r => r.result === 'broken');
     if (isSomeTestClassFailed) {
-      fileResult.result = 'failed';
+      fileResult.result = Status.FAILED;
     } else if (isEveryTestClassPassed) {
-      fileResult.result = 'passed';
+      fileResult.result = Status.PASSED;
     } else if (isSomeTestClassBroken) {
-      fileResult.result = 'broken';
+      fileResult.result = Status.BROKEN;
     } else if (isEveryTestClassSkipped) {
-      fileResult.result = 'skipped';
+      fileResult.result = Status.SKIPPED;
     } else {
-      fileResult.result = 'broken';
+      fileResult.result = Status.BROKEN;
     }
     events.emit('fileResult', this, fileResult);
     return fileResult;
@@ -147,7 +148,7 @@ export class Runner implements RunnerLike {
       ctor,
       instance,
       name: ctor.name,
-      result: 'pending',
+      result: Status.PENDING,
       results: [],
       start: Date.now(),
     };
@@ -157,15 +158,15 @@ export class Runner implements RunnerLike {
       name: ctor.name,
       tests: [],
     };
-    const classMetaValue: ClassTest = Reflect.getMetadata(METADATA_CLASS_KEY, ctor.prototype);
+    const classMetaValue: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, ctor.prototype);
     const mergedTest: ClassTest = { ...classTest, ...classMetaValue };
-    Reflect.defineMetadata(METADATA_CLASS_KEY, mergedTest, ctor.prototype)
+    Reflect.defineMetadata(metadata.CLASS_KEY, mergedTest, ctor.prototype)
     events.emit('runClass', this, mergedTest);
-    const beforeAllResults = await this._runHooks(mergedTest, 'beforeAll');
+    const beforeAllResults = await this._runHooks(mergedTest, Kind.beforeAll);
     const results = await Promise.all(mergedTest.tests.map(async test => {
       return await this.runClassTest(ctor, test.name as keyof Internal.Ctor);
     }));
-    const afterAllResults = await this._runHooks(mergedTest, 'afterAll');
+    const afterAllResults = await this._runHooks(mergedTest, Kind.afterAll);
     result.stop = Date.now();
     result.results.push(...[...beforeAllResults, ...results, ...afterAllResults]);
 
@@ -177,13 +178,13 @@ export class Runner implements RunnerLike {
 
     const isAllTestsSkipped = results.every(r => r.result === 'skipped');
     if (isAllTestsPassedExcludeSkipped) {
-      result.result = 'passed';
+      result.result = Status.PASSED;
     } else if (isAnyHookFailed) {
-      result.result = 'broken';
+      result.result = Status.BROKEN;
     } else if (isAllTestsSkipped) {
-      result.result = 'skipped';
+      result.result = Status.SKIPPED;
     } else {
-      result.result = 'broken';
+      result.result = Status.BROKEN;
     }
     events.emit('classResult', this, mergedTest, result);
     return result;
@@ -209,17 +210,17 @@ export class Runner implements RunnerLike {
     }
     const instance = this._constructInstanceIfNeeded(ctor) as Record<string, Function>;
 
-    const classTest: ClassTest = Reflect.getMetadata(METADATA_CLASS_KEY, ctor.prototype);
+    const classTest: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, ctor.prototype);
     const findedTest = classTest.tests.find(t => t.name === method);
     if (findedTest === undefined) {
       throw new Error(`${ctor.name} is no marked with @test() decorator`);
     }
     const result: TestResult = {
-      kind: 'test',
+      kind: Kind.test,
       name: findedTest.name,
       start: Date.now(),
       isHook: false,
-      result: 'pending',
+      result: Status.PENDING,
     };
 
     events.emit('classMethod', this, classTest, findedTest);
@@ -230,7 +231,7 @@ export class Runner implements RunnerLike {
       // skip. do not run hooks for selected tests
       const skippedResult: TestResult = {
         ...findedTest,
-        result: 'skipped',
+        result: Status.SKIPPED,
         hooks: [],
       };
       if (isHaveHooks) {
@@ -277,7 +278,7 @@ export class Runner implements RunnerLike {
         events.emit('classEachHook', this, classTest, findedTest, hook);
         const result = await this._runFunction.call(instance, hook.fn, []);
         events.emit('classEachHookResult', this, classTest, findedTest, hook, result);
-        // const attachments: { name: string, attachment: Attachment }[] = Reflect.getMetadata(METADATA_ATTACHMENT_KEY, instance as object);
+        // const attachments: { name: string, attachment: Attachment }[] = Reflect.getMetadata(metadata.ATTACHMENT_KEY, instance as object);
         return result;
       }));
       result.hooks?.push(...afterEachResults)
@@ -288,7 +289,7 @@ export class Runner implements RunnerLike {
     if (isHaveHooks) {
       const isSomeHookFailed = result.hooks!.some(h => h.result === 'failed');
       if (isSomeHookFailed) {
-        result.result = 'broken';
+        result.result = Status.BROKEN;
       }
     }
 
@@ -299,41 +300,41 @@ export class Runner implements RunnerLike {
 
   private async _runHooks(classTest: ClassTest, kind: Test['kind']): Promise<TestResult[]> {
     const isntance = this._constructInstanceIfNeeded(classTest.ctor);
-    const classMetaValue: ClassTest = Reflect.getMetadata(METADATA_CLASS_KEY, classTest.ctor.prototype);
+    const classMetaValue: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, classTest.ctor.prototype);
     const hooks = classMetaValue.hooks.filter(h => h.kind === kind);
     const skippedHooks = hooks.filter(h => h.skip);
     const runnedHooks = hooks.filter(h => !h.skip);
     const result: TestResult[] = [];
-    skippedHooks.forEach(k => result.push({ result: 'skipped', name: k.name, isHook: true, kind: k.kind }));
+    skippedHooks.forEach(k => result.push({ result: Status.SKIPPED, name: k.name, isHook: true, kind: k.kind }));
     const hookRunResult: TestResult[] = await Promise.all(runnedHooks.map(async h => {
       events.emit('classHook', this, classTest, h);
       const result = await this._runFunction.call(isntance, h.fn!);
       const hookResult = { ...result, isHook: true, name: h.name, kind: h.kind, stop: Date.now(), };
       events.emit('classMethodResult', this, classTest, h, hookResult);
-      // const attachments: { name: string, attachment: Attachment }[] = Reflect.getMetadata(METADATA_ATTACHMENT_KEY, isntance as object)
+      // const attachments: { name: string, attachment: Attachment }[] = Reflect.getMetadata(metadata.ATTACHMENT_KEY, isntance as object)
       return { ...hookResult, name: h.name };
     }));
     result.push(...hookRunResult);
     return result;
   }
   private _runFunction(this: any, fn: Function, ...args: any[]): Promise<TestResult> {
-    const result = { start: Date.now(), result: 'pending', attachments: [], labels: [], name: '', } as TestResult;
+    const result = { start: Date.now(), result: Status.PENDING, name: '', } as TestResult;
     return Promise.race<TestResult>([
       Reflect.apply(fn, this || null, args),
       delay(Runner.timeout),
     ]).then(() => {
-      return { ...result, result: 'passed', name: fn.name, stop: Date.now() } as TestResult;
+      return { ...result, result: Status.PASSED, stop: Date.now() } as TestResult;
     }).catch(error => {
       if (types.isNativeError(error) || typeof error === 'string') {
         console.error(error);
-        return { ...result, result: 'failed', error, name: fn.name, stop: Date.now() };
+        return { ...result, result: Status.FAILED, error, stop: Date.now() };
       }
-      return { ...result, result: 'failed', error: new Error('unknown error occured'), name: fn.name, isHook: false, stop: Date.now(), };
+      return { ...result, result: Status.FAILED, error: new Error('unknown error occured'), stop: Date.now(), };
     });
   }
   private _constructInstanceIfNeeded<R>(ctor: Internal.Ctor<R>): R {
-    const metaInstance = Reflect.getMetadata(METADATA_INSTANCE_KEY, ctor.prototype);
-    const classTest: ClassTest = Reflect.getMetadata(METADATA_CLASS_KEY, ctor.prototype)
+    const metaInstance = Reflect.getMetadata(metadata.INSTANCE_KEY, ctor.prototype);
+    const classTest: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, ctor.prototype)
     if (!metaInstance) {
       const instance = Reflect.construct(ctor, []);
       events.emit('classConstructor', this, classTest, instance);

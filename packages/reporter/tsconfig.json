@@ -8,5 +8,7 @@
   "references": [
     {"path": "../constants"},
     {"path": "../types"},
+    {"path": "../events"},
+    {"path": "../errors"},
   ]
 }
