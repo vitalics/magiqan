@@ -1,0 +1,5 @@
+# @magiqan/core
+
+## constants
+
+## runtime

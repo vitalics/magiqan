@@ -22,8 +22,6 @@
   },
   "dependencies": {
     "@magiqan/constants": "file:../constants",
-    "@magiqan/events": "file:../events",
-    "@magiqan/runtime": "file:../runtime",
-    "@magiqan/types": "file:../types"
+    "@magiqan/runtime": "file:../runtime"
   }
 }

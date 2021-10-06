@@ -21,7 +21,7 @@ export abstract class Reporter {
    */
   abstract generate(outFile: string): Promise<void>;
 
-  constructor(runner: RunnerLike) {
+  constructor() {
     events.subscribe('fileResult', (_runner, result) => {
       this._results.push(result);
     });
@@ -36,10 +36,7 @@ export abstract class Reporter {
   onClassResult(_result: ClassResult, _cls: ClassTest, _runner: RunnerLike): void { };
   onTestRun(_test: Test, _cls: ClassTest, _runner: RunnerLike) { }
   onTestResult(_result: TestResult, _test: Test, _cls: ClassTest, _runner: RunnerLike) { }
-  onTestMetadataAttached(_test: Test, _metadata: Test['metadata']) { }
-
-  addMetadata(test: Test, metadata: Test['metadata']) {
-    // events.emit('classMethodMetadata',)
-    // test.metadata = metadata;
-  }
+  onTestMetadata(_test: Test, _metadata: Test['metadata']) { }
+  onHookMetadata(_test: Test, _metadata: Test['metadata']) { }
+  onClassMetadata(_test: ClassTest, _metadata: Test['metadata']) { }
 }

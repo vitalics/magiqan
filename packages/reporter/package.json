@@ -23,8 +23,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@magiqan/constants": "file:../constants",
-    "@magiqan/errors": "file:../errors",
     "@magiqan/events": "file:../events",
     "@magiqan/types": "file:../types"
   }
