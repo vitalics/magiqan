@@ -294,7 +294,6 @@ export class Runner implements RunnerLike {
     }
 
     const testRunResult = await this._runFunction.call(instance, findedTest.fn, findedTest.data);
-    debugger;
     // test: append metadata
     const testMetadata: Test[] = Reflect.getMetadata(metadata.TEST_KEY, ctor.prototype);
     const testWithMetadata = testMetadata.find(m => m.name === findedTest.name);

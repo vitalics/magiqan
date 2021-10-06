@@ -8,5 +8,14 @@
     {
       "path": "../constants"
     },
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../errors"
+    },
+    {
+      "path": "../events"
+    },
   ]
 }
