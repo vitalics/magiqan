@@ -1,6 +1,6 @@
 {
   "name": "@magiqan/cli",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Cli",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,7 +9,7 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/magiqans/jest.git",
+    "url": "https://github.com/magiqans/magiqan.git",
     "directory": "packages/cli"
   },
   "license": "MIT",

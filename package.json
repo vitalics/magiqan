@@ -6,9 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "ts-node": "node -r ts-node/register -r tsconfig-paths/register --",
     "start": "node -e 'console.log(`Hello`)'",
-    "build": "ttsc"
+    "build": "tsc"
   },
   "engines": {
     "node": "^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0"
