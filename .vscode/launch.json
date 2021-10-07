@@ -18,7 +18,8 @@
       ],
       "outFiles": [
         "${workspaceFolder}/**/*.js"
-      ]
+      ],
+      "autoAttachChildProcesses": true
     }
   ]
 }

@@ -1,0 +1,113 @@
+[
+  {
+    "path": "/Users/vitaliharadkou/Documents/git/magiqan/examples/src/testFile.ts",
+    "results": [
+      {
+        "name": "SomeTest",
+        "result": "passed",
+        "results": [
+          {
+            "start": 1633586880608,
+            "result": "passed",
+            "name": "beforeAll",
+            "metadata": {
+              "some key": "some value"
+            },
+            "stop": 1633586880613,
+            "isHook": true,
+            "kind": "beforeAll"
+          },
+          {
+            "kind": "test",
+            "name": "someTest",
+            "start": 1633586880614,
+            "isHook": false,
+            "result": "passed",
+            "metadata": {
+              "key": "value"
+            },
+            "stop": 1633586880615
+          }
+        ],
+        "start": 1633586880608,
+        "metadata": {},
+        "stop": 1633586880615
+      }
+    ],
+    "result": "passed"
+  },
+  {
+    "path": "/Users/vitaliharadkou/Documents/git/magiqan/examples/src/testFile.ts",
+    "results": [
+      {
+        "name": "SomeTest",
+        "result": "passed",
+        "results": [
+          {
+            "start": 1633586880629,
+            "result": "passed",
+            "name": "beforeAll",
+            "metadata": {
+              "some key": "some value"
+            },
+            "stop": 1633586880633,
+            "isHook": true,
+            "kind": "beforeAll"
+          },
+          {
+            "kind": "test",
+            "name": "someTest",
+            "start": 1633586880633,
+            "isHook": false,
+            "result": "passed",
+            "metadata": {
+              "key": "value"
+            },
+            "stop": 1633586880634
+          }
+        ],
+        "start": 1633586880629,
+        "metadata": {},
+        "stop": 1633586880634
+      }
+    ],
+    "result": "passed"
+  },
+  {
+    "path": "/Users/vitaliharadkou/Documents/git/magiqan/examples/src/testFile.ts",
+    "results": [
+      {
+        "name": "SomeTest",
+        "result": "passed",
+        "results": [
+          {
+            "start": 1633586880661,
+            "result": "passed",
+            "name": "beforeAll",
+            "metadata": {
+              "some key": "some value"
+            },
+            "stop": 1633586880664,
+            "isHook": true,
+            "kind": "beforeAll"
+          },
+          {
+            "kind": "test",
+            "name": "someTest",
+            "start": 1633586880664,
+            "isHook": false,
+            "result": "passed",
+            "metadata": {
+              "key": "value"
+            },
+            "stop": 1633586880665
+          }
+        ],
+        "start": 1633586880660,
+        "metadata": {},
+        "stop": 1633586880665
+      }
+    ],
+    "result": "passed"
+  }
+]

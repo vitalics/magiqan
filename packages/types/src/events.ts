@@ -24,6 +24,11 @@ export type Map = {
   readonly classMethod: [runner: RunnerLike, cls: ClassTest, test: Test];
   readonly classMethodMetadata: [cls: ClassTest, test: Test, metadata: Record<string, unknown>];
   readonly classMethodResult: [runner: RunnerLike, cls: ClassTest, test: Test, result: TestResult];
+  // TODO: workers
+  readonly allWorkerStart: []
+  readonly workerStart: []
+  readonly workerEnd: []
+  readonly allWorkerEnd: []
 };
 
 export type Names = keyof Map;

@@ -9,7 +9,7 @@ import type {
 export abstract class Reporter {
 
   /** Raw results. Can be remap for reporter purpuse */
-  protected _results: FileResult[] = [];
+  _results: FileResult[] = [];
   /**
    * Generates result
    * 
@@ -22,15 +22,17 @@ export abstract class Reporter {
   abstract generate(outFile: string): Promise<void>;
 
   constructor() {
-    events.subscribe('fileResult', (_runner, result) => {
-      this._results.push(result);
+    events.subscribe('fileResult', (runner, result) => {
+      this.onFileResult(result, runner);
     });
   }
 
   onInit(_runner: RunnerLike) { }
   onFileRun(_file: FileTest, _runner: RunnerLike) { }
   onFileParse(_file: FileTest, _runner: RunnerLike) { }
-  onFileResult(_result: FileResult, _runner: RunnerLike) { }
+  onFileResult(result: FileResult, _runner: RunnerLike) {
+    this._results.push(result);
+  }
   onClassRun(_cls: ClassTest, _runner: RunnerLike) { }
   onClassConstructor(_cls: ClassTest, _instance: any, _runner: RunnerLike) { }
   onClassResult(_result: ClassResult, _cls: ClassTest, _runner: RunnerLike): void { };

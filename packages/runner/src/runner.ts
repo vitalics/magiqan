@@ -1,5 +1,7 @@
+import { SHARE_ENV, Worker } from 'worker_threads';
 import { resolve } from 'path';
 import { types, promisify } from 'util';
+import { setTimeout } from 'timers';
 
 import 'reflect-metadata';
 import glob = require('glob');
@@ -25,6 +27,7 @@ import delay from './delay';
 
 const globAsync = promisify(glob);
 const defaultTimeout = 5000;
+const timeout = promisify(setTimeout);
 
 export class Runner implements RunnerLike {
   static timeout = defaultTimeout;
@@ -61,6 +64,31 @@ export class Runner implements RunnerLike {
   private _appendFile(file: string) {
     this._allPaths.push(resolve(this.cwd, file));
   }
+
+  async runAsync() {
+    if (!this._hasInitBefore) {
+      this._init();
+    }
+    const results: FileResult[] = [];
+    this._allPaths.forEach(path => {
+      const worker = new Worker(resolve(__dirname, './worker.js'), {
+        workerData: path,
+        env: SHARE_ENV,
+      });
+      worker.on('message', (data: FileResult) => {
+        results.push(data);
+        worker.terminate();
+      });
+      worker.on('exit', () => {
+        worker.terminate();
+      });
+    });
+    // wait until results emitted
+    while (results.length !== this._allPaths.length) {
+      await timeout(100); // short worker delay
+    }
+    return results;
+  }
   async run(): Promise<(FileResult | undefined)[]> {
     if (!this._hasInitBefore) {
       this._init();
@@ -72,7 +100,7 @@ export class Runner implements RunnerLike {
     // map paths to file test
     const files = this._allPaths.map(path => {
       return { classes: [], path } as FileTest;
-    })
+    });
 
     const results = await Promise.all(
       files.map(async f => {

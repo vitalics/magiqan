@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "start": "node -e 'console.log(`Hello`)'",
+    "example": "node -r ts-node/register examples/src/index.ts",
     "build": "npm run build:constants & npm run build:types & npm run build:core & npm run build:events & npm run build:errors & npm run build:reporter & npm run build:runner & npm run build:cli",
     "build:cli": "npm run build --prefix packages/cli",
     "build:constants": "npm run build --prefix packages/constants",
@@ -25,8 +26,8 @@
   "devDependencies": {
     "@types/node": "^16.9.6",
     "ts-node": "^10.2.1",
-    "typescript": "^4.3.4",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "typescript": "^4.3.4"
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13"
