@@ -1,32 +1,27 @@
 import { Runner } from '@magiqan/runner';
-import { performance, PerformanceObserver } from 'perf_hooks'
-import { JSONReporter, WorkerReporter } from '@magiqan/reporter';
+import { JSONReporter } from '@magiqan/reporter';
 
-// import { SomeTest } from './testFile';
-
-const obs = new PerformanceObserver((list) => {
-  const entries = list.getEntriesByType('function');
-  entries.forEach((entry) => {
-    console.log(`${entry.name} takes`, entry.duration)
-  });
-  obs.disconnect();
-});
-obs.observe({ entryTypes: ['function'] });
 
 export async function run() {
   const runner = new Runner(__dirname);
-  const timerifyWorker = performance.timerify(runner.runAsync)
-  // const reporter = new JSONReporter();
+  const reporter = new JSONReporter('./out.json');
   runner.addFile('./testFile.ts');
-  runner.addFile('./testFile.ts');
-  runner.addFile('./testFile.ts');
+  // runner.addFile('./testFile.ts');
+  // runner.addFile('./testFile.ts');
   // experimantal workers
-  const result = await timerifyWorker.call(runner); // duration 4~5 
-  const wr = new WorkerReporter(new JSONReporter());
-  wr.addResults(result);
-  await wr.generate('./worker-output.json');
+  // const result = await runner.runAsync(); // duration 4~5 
+  // const wr = new WorkerReporter(new JSONReporter());
+  // wr.addResults(result);
+  // await wr.generate('./worker-output.json');
 
-  // await timerifyRun.call(runner); // duration: 2~3
+
+  await runner.run(); // duration: 2~3
+
+  await reporter.generate();
+  // reporter.destroy();
+  // await pipelineAsync(JSON.stringify(result!), reporter);
+
+  // reporter.pipe(destination)
   // const results = runner.run();
   // console.log('file results', results);
 

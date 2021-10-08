@@ -31,7 +31,8 @@ const timeout = promisify(setTimeout);
 
 export class Runner implements RunnerLike {
   static timeout = defaultTimeout;
-  constructor(readonly cwd = __dirname) { }
+  constructor(readonly cwd = process.cwd()) {
+  }
   private _allPaths: string[] = [];
   private _hasInitBefore = false;
 
@@ -39,7 +40,7 @@ export class Runner implements RunnerLike {
   protected _currentClass?: ClassTest;
 
   private _init(): void | Promise<void> {
-    events.emit('runnerInit', this);
+    events.emit('runnerInit', this, this.cwd);
   }
 
   setDefaultTimeout(timeout: number) {
@@ -194,10 +195,9 @@ export class Runner implements RunnerLike {
     if (!this._hasInitBefore) {
       this._init();
     }
-    const instance = this._constructInstanceIfNeeded(ctor);
+    this._constructInstanceIfNeeded(ctor);
     const result: ClassResult = {
       ctor,
-      instance,
       name: ctor.name,
       result: Status.PENDING,
       results: [],
@@ -426,7 +426,6 @@ export class Runner implements RunnerLike {
     return metaInstance;
   }
 }
-
 
 function isFileTest(testLike: unknown): testLike is FileTest {
   if (typeof testLike === 'object' && testLike && 'path' in testLike && 'classes' in testLike) {

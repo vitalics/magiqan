@@ -3,35 +3,35 @@
     "path": "/Users/vitaliharadkou/Documents/git/magiqan/examples/src/testFile.ts",
     "results": [
       {
-        "instance": {},
         "name": "SomeTest",
         "result": "passed",
         "results": [
           {
-            "start": 1633522634149,
+            "start": 1633685890977,
             "result": "passed",
             "name": "beforeAll",
-            "stop": 1633522634152,
+            "metadata": {
+              "some key": "some value"
+            },
+            "stop": 1633685890986,
             "isHook": true,
             "kind": "beforeAll"
           },
           {
             "kind": "test",
             "name": "someTest",
-            "start": 1633522634152,
+            "start": 1633685890987,
             "isHook": false,
             "result": "passed",
             "metadata": {
-              "metadataValue": {
-                "key": "value"
-              }
+              "key": "value"
             },
-            "stop": 1633522658385
+            "stop": 1633685890991
           }
         ],
-        "start": 1633522634149,
+        "start": 1633685890974,
         "metadata": {},
-        "stop": 1633522658385
+        "stop": 1633685890992
       }
     ],
     "result": "passed"

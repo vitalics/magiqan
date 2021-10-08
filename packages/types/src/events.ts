@@ -4,7 +4,7 @@ import type { Result as FileResult, File as FileTest } from './file';
 import type { RunnerLike } from './runner';
 
 export type Map = {
-  readonly runnerInit: [runner: RunnerLike];
+  readonly runnerInit: [runner: RunnerLike, cwd: string];
   // file events
   readonly runFile: [runner: RunnerLike, file: FileTest];
   readonly fileParsed: [runner: RunnerLike, result: FileTest];
@@ -25,10 +25,10 @@ export type Map = {
   readonly classMethodMetadata: [cls: ClassTest, test: Test, metadata: Record<string, unknown>];
   readonly classMethodResult: [runner: RunnerLike, cls: ClassTest, test: Test, result: TestResult];
   // TODO: workers
-  readonly allWorkerStart: []
-  readonly workerStart: []
-  readonly workerEnd: []
-  readonly allWorkerEnd: []
+  readonly allWorkerStart: [];
+  readonly workerStart: [];
+  readonly workerEnd: [];
+  readonly allWorkerEnd: [];
 };
 
 export type Names = keyof Map;
