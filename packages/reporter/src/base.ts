@@ -18,7 +18,7 @@ export abstract class Reporter {
    * @return {*}  {Promise<void | Promise<void>>}
    * @memberof Reporter
    */
-  abstract generate(): void | Promise<void>;
+  abstract generate(): Promise<void>;
 
   constructor() {
     // subscribe to all events

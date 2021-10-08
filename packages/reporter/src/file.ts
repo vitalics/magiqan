@@ -15,7 +15,7 @@ export abstract class FileReporter extends Reporter {
     this.file = resolve(cwd, this.filePath);
     this._stream = createWriteStream(this.file, { flags: 'w+' });
   }
-  generate(data?: any) {
+  async generate(data?: any) {
     this._stream?.end(data);
   }
 }

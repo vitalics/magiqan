@@ -12,6 +12,7 @@
   "dependencies": {
     "@magiqan/cli": "file:../packages/cli",
     "@magiqan/core": "file:../packages/core",
+    "@magiqan/profiler": "file:../packages/profiler",
     "@magiqan/reporter": "file:../packages/reporter",
     "@magiqan/runner": "file:../packages/runner",
     "typescript": "^4.4.3"

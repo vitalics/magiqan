@@ -1,8 +1,10 @@
 import { Runner } from '@magiqan/runner';
 import { JSONReporter } from '@magiqan/reporter';
-
+import { CPUProfiler, HeapProfiler } from '@magiqan/profiler';
 
 export async function run() {
+  const profiler = new CPUProfiler();
+  const heap = new HeapProfiler();
   const runner = new Runner(__dirname);
   const reporter = new JSONReporter('./out.json');
   runner.addFile('./testFile.ts');
@@ -14,8 +16,9 @@ export async function run() {
   // wr.addResults(result);
   // await wr.generate('./worker-output.json');
 
-
+  profiler.start();
   await runner.run(); // duration: 2~3
+  profiler.stop();
 
   reporter.generate();
   // reporter.destroy();

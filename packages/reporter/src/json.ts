@@ -23,7 +23,7 @@ export class JSONReporter extends FileReporter {
     this._stream?.write(stringifyed);
   }
   generate() {
-    super.generate(']');
+    return super.generate(']');
   }
 
   // inheritance. keep empty 
