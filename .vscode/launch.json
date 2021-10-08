@@ -7,14 +7,14 @@
     {
       "type": "pwa-node",
       "request": "launch",
-      "name": "Debug opened ts file",
+      "name": "Debug example",
       "skipFiles": [
         "<node_internals>/**"
       ],
       "args": [
         "-r",
         "ts-node/register",
-        "${relativeFile}"
+        "${workspaceFolder}/examples/src/index.ts"
       ],
       "outFiles": [
         "${workspaceFolder}/**/*.js"

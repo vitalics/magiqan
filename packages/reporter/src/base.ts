@@ -3,10 +3,9 @@ import type {
   ClassResult, ClassTest,
   FileResult, FileTest,
   Test, TestResult,
-  RunnerLike,
   Hook,
+  RunnerLike,
 } from '@magiqan/types';
-
 
 export abstract class Reporter {
 
@@ -24,60 +23,60 @@ export abstract class Reporter {
   constructor() {
     // subscribe to all events
     // runner
-    events.subscribe('runnerInit', (r, cwd) => {
-      this.onRunnerInit(r, cwd);
+    events.subscribe('runnerInit', async (r, cwd) => {
+      await this.onRunnerInit(r, cwd);
     });
     // file evetns
-    events.subscribe('fileResult', (runner, result) => {
-      this.onFileResult(result, runner);
+    events.subscribe('fileResult', async (runner, result) => {
+      await this.onFileResult(result, runner);
     });
-    events.subscribe('fileParsed', (runner, result) => {
-      this.onFileParse(result, runner);
+    events.subscribe('fileParsed', async (runner, result) => {
+      await this.onFileParse(result, runner);
     });
-    events.subscribe('runFile', (runner, file) => {
-      this.onFileRun(file, runner);
+    events.subscribe('runFile', async (runner, file) => {
+      await this.onFileRun(file, runner);
     });
     // class events. 12 events total
-    events.subscribe('runClass', (runner, clas) => {
-      this.onClassRun(clas, runner);
+    events.subscribe('runClass', async (runner, clas) => {
+      await this.onClassRun(clas, runner);
     });
-    events.subscribe('classConstructor', (runner, test, instance) => {
-      this.onClassConstructor(test, instance, runner)
+    events.subscribe('classConstructor', async (runner, test, instance) => {
+      await this.onClassConstructor(test, instance, runner)
     });
-    events.subscribe('classHook', (runner, cls, hook) => {
-      this.onClassHook(hook, cls, runner);
+    events.subscribe('classHook', async (runner, cls, hook) => {
+      await this.onClassHook(hook, cls, runner);
     });
-    events.subscribe('classMetadata', (cls, metadata) => {
-      this.onClassMetadata(cls, metadata);
+    events.subscribe('classMetadata', async (cls, metadata) => {
+      await this.onClassMetadata(cls, metadata);
     });
-    events.subscribe('classHookMetadata', (cls, test, metadata) => {
-      this.onClassHookMetadata(cls, test, metadata);
+    events.subscribe('classHookMetadata', async (cls, test, metadata) => {
+      await this.onClassHookMetadata(cls, test, metadata);
     });
-    events.subscribe('classMethod', (runner, cls, test) => {
-      this.onTestRun(test, cls, runner)
+    events.subscribe('classMethod', async (runner, cls, test) => {
+      await this.onTestRun(test, cls, runner)
     });
-    events.subscribe('classMethodMetadata', (cls, test, metadata) => {
-      this.onTestMetadata(cls, test, metadata)
+    events.subscribe('classMethodMetadata', async (cls, test, metadata) => {
+      await this.onTestMetadata(cls, test, metadata)
     });
-    events.subscribe('classMethodResult', (runner, cls, test, result) => {
-      this.onTestResult(result, test, cls, runner);
+    events.subscribe('classMethodResult', async (runner, cls, test, result) => {
+      await this.onTestResult(result, test, cls, runner);
     });
-    events.subscribe('classEachHookResult', (runner, cls, test, hook, result) => {
-      this.onTestEachHookResult(result, hook, test, cls, runner);
+    events.subscribe('classEachHookResult', async (runner, cls, test, hook, result) => {
+      await this.onTestEachHookResult(result, hook, test, cls, runner);
     });
-    events.subscribe('classEachHook', (runner, cls, test, hook) => {
-      this.onClassEachHook(hook, test, cls, runner);
+    events.subscribe('classEachHook', async (runner, cls, test, hook) => {
+      await this.onClassEachHook(hook, test, cls, runner);
     });
-    events.subscribe('classHookResult', (runner, cls, hook, result) => {
-      this.onclassHookResult(result, hook, cls, runner)
+    events.subscribe('classHookResult', async (runner, cls, hook, result) => {
+      await this.onclassHookResult(result, hook, cls, runner)
     });
-    events.subscribe('classResult', (runner, cls, result) => {
-      this.onClassResult(result, cls, runner);
+    events.subscribe('classResult', async (runner, cls, result) => {
+      await this.onClassResult(result, cls, runner);
     });
   }
   // TODO: add docs for each method
 
-  abstract onRunnerInit(runner: RunnerLike, cwd: string): void | Promise<void> | Promise<void | Promise<void>>;
+  abstract onRunnerInit(runner: RunnerLike, cwd: string): void | Promise<void>;
   abstract onFileRun(file: FileTest, runner: RunnerLike): void | Promise<void>;
   abstract onFileParse(file: FileTest, runner: RunnerLike): void | Promise<void>;
   abstract onFileResult(result: FileResult, runner: RunnerLike): void | Promise<void>;

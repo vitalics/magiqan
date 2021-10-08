@@ -6,7 +6,6 @@ import { Runner } from '@magiqan/runner';
 import { JSONReporter } from '@magiqan/reporter';
 
 const runner = new Runner(process.cwd());
-const reporter = new JSONReporter();
 
 yargs(hideBin(process.argv))
   .command('run <grep>', 'run tests',
@@ -17,10 +16,12 @@ yargs(hideBin(process.argv))
       default: 'out.json'
     }),
     async args => {
+      const reporter = new JSONReporter(args.output);
+
       await runner.addGlob(args.grep as string ?? 'tests/**/*.test.ts');
 
       await runner.run();
-      await reporter.generate(args.output);
+      await reporter.generate();
     }).option('reporter', {
       type: 'string',
       default: 'JSONReporter'

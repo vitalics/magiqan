@@ -39,7 +39,8 @@ export class Runner implements RunnerLike {
   protected _currentFile?: FileTest;
   protected _currentClass?: ClassTest;
 
-  private _init(): void | Promise<void> {
+  private _init(): void {
+    this._hasInitBefore = true;
     events.emit('runnerInit', this, this.cwd);
   }
 

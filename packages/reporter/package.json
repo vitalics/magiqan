@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@magiqan/events": "file:../events",
-    "@magiqan/types": "file:../types"
+    "@magiqan/types": "file:../types",
+    "axios": "^0.22.0"
   }
 }

@@ -17,7 +17,7 @@ export async function run() {
 
   await runner.run(); // duration: 2~3
 
-  await reporter.generate();
+  reporter.generate();
   // reporter.destroy();
   // await pipelineAsync(JSON.stringify(result!), reporter);
 
