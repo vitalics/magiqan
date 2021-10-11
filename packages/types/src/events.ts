@@ -6,7 +6,7 @@ import type { Logger } from './logger';
 
 export type Map = {
   readonly runnerInit: Event<'runnerInit', { runner: RunnerLike, cwd: string }>;
-  readonly log: Event<'log', { level: Logger, message: string }>;
+  readonly log: Event<'log', { level: Logger, message: string, args?: unknown[] }>;
   // file events
   readonly runFile: Event<'runFile', { runner: RunnerLike, file: FileTest }>;
   readonly fileParsed: Event<'fileParsed', { runner: RunnerLike, result: FileTest }>;

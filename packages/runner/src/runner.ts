@@ -44,6 +44,7 @@ export class Runner implements RunnerLike {
 
   private _init(): void {
     this._hasInitBefore = true;
+    log.debug('Runner._init()');
     events.emit(new Event('runnerInit', { runner: this, cwd: this.cwd }));
   }
 
@@ -73,7 +74,7 @@ export class Runner implements RunnerLike {
   }
 
   async runAsync() {
-    log.warn('runAsync is experimantal, use run instead');
+    log.warn('Runner.runAsync() is experimantal, use Runner.run() method instead');
     if (!this._hasInitBefore) {
       this._init();
     }
@@ -98,6 +99,7 @@ export class Runner implements RunnerLike {
     return results;
   }
   async run(): Promise<(FileResult | undefined)[]> {
+    log.debug('Runner.run() %o', this._allPaths);
     if (!this._hasInitBefore) {
       this._init();
     }
@@ -124,6 +126,7 @@ export class Runner implements RunnerLike {
   }
 
   async runFile(filePathOrTest: string | FileTest): Promise<FileResult | undefined> {
+    log.debug(`Runner.runFile(${filePathOrTest})`);
     if (!this._hasInitBefore) {
       this._init();
     }
@@ -202,6 +205,7 @@ export class Runner implements RunnerLike {
    * @memberof Runner
    */
   async runClass<R>(ctor: Internal.Ctor<R>): Promise<ClassResult> {
+
     if (!this._hasInitBefore) {
       this._init();
     }
@@ -221,6 +225,8 @@ export class Runner implements RunnerLike {
       tests: [],
       metadata: {},
     };
+    log.debug('=> Runner.runClass() %o', classTest);
+
     const classMetaValue: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, ctor.prototype);
     const mergedTest: ClassTest = { ...classTest, ...classMetaValue };
     Reflect.defineMetadata(metadata.CLASS_KEY, mergedTest, ctor.prototype)
@@ -250,6 +256,7 @@ export class Runner implements RunnerLike {
       result.result = Status.BROKEN;
     }
     result.metadata = mergedTest.metadata;
+    log.debug('<= Runner.runClass() %o', mergedTest);
 
     events.emit(new Event('classResult', { runner: this, class: mergedTest, result }));
     return result;
@@ -276,7 +283,9 @@ export class Runner implements RunnerLike {
     const instance = this._constructInstanceIfNeeded(ctor) as object;
 
     const classTest: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, ctor.prototype);
+
     const findedTest = classTest.tests.find(t => t.name === method);
+    log.debug('<= Runner.runClassTest() %o', findedTest!);
     if (findedTest === undefined) {
       throw new Error(`${ctor.name} is no marked with @test() decorator`);
     }
@@ -377,6 +386,7 @@ export class Runner implements RunnerLike {
         result.result = Status.BROKEN;
       }
     }
+    log.debug('=> Runner.runClassTest() %o', result);
 
     events.emit(new Event('classMethodResult', { runner: this, class: classTest, test: findedTest, result }));
 
@@ -384,9 +394,11 @@ export class Runner implements RunnerLike {
   }
 
   private async _runHooks(classTest: ClassTest, kind: Test['kind']): Promise<TestResult[]> {
+
     const isntance = this._constructInstanceIfNeeded(classTest.ctor);
     const classMetaValue: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, classTest.ctor.prototype);
     const hooks = classMetaValue.hooks.filter(h => h.kind === kind);
+    log.debug('=> Runner._runHooks() \n class = %o \n hooks = %o', classMetaValue, hooks);
     const skippedHooks = hooks.filter(h => h.skip);
     const runnedHooks = hooks.filter(h => !h.skip);
     const result: TestResult[] = [];
@@ -403,8 +415,9 @@ export class Runner implements RunnerLike {
       }
 
       const hookResult = { ...result, isHook: true, name: h.name, kind: h.kind, stop: Date.now(), };
+      log.debug('<= Runner._runHooks() = %o', hookResult);
+
       events.emit(new Event('classMethodResult', { runner: this, class: classTest, hook: h, result: hookResult }));
-      // const attachments: { name: string, attachment: Attachment }[] = Reflect.getMetadata(metadata.ATTACHMENT_KEY, isntance as object)
       return { ...hookResult, name: h.name };
     }));
     result.push(...hookRunResult);

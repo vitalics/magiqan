@@ -1,8 +1,11 @@
 import type { Events } from '@magiqan/types';
 
-export class Event<T extends Record<string, unknown>> implements Events.Event<string, T> {
+export class Event<
+  N extends string | keyof Events.Map = keyof Events.Map,
+  T extends Events.Map[keyof Events.Map] | Record<string, unknown> = Record<string, unknown>
+  > implements Events.Event<N, T> {
   constructor(
-    public readonly name: string,
+    public readonly name: N,
     public readonly payload: T,
   ) { }
 }

@@ -1,7 +1,7 @@
 {
   "name": "@magiqan/profiler",
   "version": "1.0.0",
-  "description": "Profiler module that watch called functions and find the issuses",
+  "description": "Experimantal profiler module that watch called functions and find the issuses",
   "scripts": {
     "build": "tsc"
   },
@@ -10,7 +10,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/magiqans/magiqan.git",
-    "directory": "packages/runner"
+    "directory": "packages/profiler"
   },
   "license": "MIT",
   "main": "./build/index.js",

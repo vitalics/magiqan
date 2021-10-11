@@ -4,8 +4,8 @@ import prefix = require('loglevel-plugin-prefix');
 import type { LogLevelDesc } from 'loglevel';
 
 import type { Logger } from '@magiqan/types';
-
-
+import events, { Event } from '@magiqan/events';
+import { LogEvent } from './event';
 
 const colors = {
   TRACE: chalk.magenta,
@@ -18,22 +18,22 @@ const colors = {
 prefix.reg(log);
 log.enableAll();
 
-
 const loggers = log.getLoggers();
 
-export default function logger(name: string, level: LogLevelDesc = 'info'): Logger {
-  if (loggers[name]) {
-    return loggers[name];
+export default function logger(namespace: string, level: LogLevelDesc = 'info'): Logger {
+  if (loggers[namespace]) {
+    return loggers[namespace];
   }
-  loggers[name] = log.getLogger(name);
-  loggers[name].setLevel(level);
+  loggers[namespace] = log.getLogger(namespace);
+  loggers[namespace].setLevel(level);
 
-  prefix.apply(loggers[name], {
+  prefix.apply(loggers[namespace], {
     format(level, name, timestamp) {
-      const message = colors[level as keyof typeof colors](level)
+      const message = colors[level as keyof typeof colors](level);
+      events.emit(new LogEvent({ namespace, message }))
       return `${chalk.gray(`[${timestamp}]`)} ${message} ${chalk.green(`${name}:`)}`;
     },
   });
 
-  return loggers[name];
+  return loggers[namespace];
 }
