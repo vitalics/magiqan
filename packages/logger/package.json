@@ -1,7 +1,7 @@
 {
-  "name": "@magiqan/runner",
-  "version": "1.0.0",
-  "description": "Runner",
+  "name": "@magiqan/logger",
+  "version": "0.0.0",
+  "description": "Logger utility",
   "scripts": {
     "build": "tsc"
   },
@@ -10,7 +10,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/magiqans/magiqan.git",
-    "directory": "packages/runner"
+    "directory": "packages/errors"
   },
   "license": "MIT",
   "main": "./build/index.js",
@@ -23,14 +23,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@magiqan/constants": "file:../constants",
-    "@magiqan/errors": "file:../errors",
-    "@magiqan/events": "file:../events",
-    "@magiqan/logger": "file:../logger",
-    "@magiqan/types": "file:../types",
-    "glob": "^7.2.0"
-  },
-  "devDependencies": {
-    "@types/glob": "^7.1.4"
+    "chalk": "^4.1.2",
+    "loglevel": "^1.7.1",
+    "loglevel-plugin-prefix": "^0.8.4"
   }
 }

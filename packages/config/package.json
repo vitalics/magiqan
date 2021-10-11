@@ -1,16 +1,17 @@
 {
-  "name": "@magiqan/runner",
-  "version": "1.0.0",
-  "description": "Runner",
+  "name": "@magiqan/config",
+  "version": "0.0.0",
+  "description": "Config description",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "generate": "node -r ts-node/register ./src/generator.ts"
   },
   "keywords": [],
   "author": "",
   "repository": {
     "type": "git",
     "url": "https://github.com/magiqans/magiqan.git",
-    "directory": "packages/runner"
+    "directory": "packages/types"
   },
   "license": "MIT",
   "main": "./build/index.js",
@@ -23,14 +24,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@magiqan/constants": "file:../constants",
-    "@magiqan/errors": "file:../errors",
-    "@magiqan/events": "file:../events",
-    "@magiqan/logger": "file:../logger",
+    "@magiqan/reporter": "file:../reporter",
     "@magiqan/types": "file:../types",
-    "glob": "^7.2.0"
-  },
-  "devDependencies": {
-    "@types/glob": "^7.1.4"
+    "ajv": "^8.6.3",
+    "fluent-json-schema": "^3.0.1",
+    "ts-json-schema-decorator": "^1.2.4"
   }
 }

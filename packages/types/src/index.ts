@@ -6,3 +6,4 @@ export * as Internal from './_internal';
 export * as Lifecycle from './lifecycle';
 export * as Events from './events';
 export type { RunnerLike } from './runner';
+export type { Logger } from './logger';

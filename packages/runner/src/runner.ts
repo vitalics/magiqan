@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { types, promisify } from 'util';
 import { setTimeout } from 'timers';
 
+
 import 'reflect-metadata';
 import glob = require('glob');
 
@@ -21,7 +22,8 @@ import {
   Kind,
   Status,
 } from '@magiqan/constants';
-import { events } from '@magiqan/events';
+import { events, Event } from '@magiqan/events';
+import logger from '@magiqan/logger';
 
 import delay from './delay';
 
@@ -29,10 +31,11 @@ const globAsync = promisify(glob);
 const defaultTimeout = 5000;
 const timeout = promisify(setTimeout);
 
+const log = logger('@magiqans/runner');
+
 export class Runner implements RunnerLike {
   static timeout = defaultTimeout;
-  constructor(readonly cwd = process.cwd()) {
-  }
+  constructor(readonly cwd = process.cwd()) { }
   private _allPaths: string[] = [];
   private _hasInitBefore = false;
 
@@ -41,7 +44,7 @@ export class Runner implements RunnerLike {
 
   private _init(): void {
     this._hasInitBefore = true;
-    events.emit('runnerInit', this, this.cwd);
+    events.emit(new Event('runnerInit', { runner: this, cwd: this.cwd }));
   }
 
   setDefaultTimeout(timeout: number) {
@@ -64,10 +67,13 @@ export class Runner implements RunnerLike {
   }
 
   private _appendFile(file: string) {
-    this._allPaths.push(resolve(this.cwd, file));
+    const resolved = resolve(this.cwd, file)
+    log.debug(`append file ${resolved}`);
+    this._allPaths.push(resolved);
   }
 
   async runAsync() {
+    log.warn('runAsync is experimantal, use run instead');
     if (!this._hasInitBefore) {
       this._init();
     }
@@ -101,13 +107,16 @@ export class Runner implements RunnerLike {
 
     // map paths to file test
     const files = this._allPaths.map(path => {
-      return { classes: [], path } as FileTest;
+      return { classes: [], path, } as FileTest;
     });
+
+    const coldResults: FileResult[] = files.map(f => ({ path: f.path, start: Date.now(), result: Status.PENDING, results: [] }));
 
     const results = await Promise.all(
       files.map(async f => {
         this._currentFile = f;
-        const result = await this.runFile(f);
+        const coldResult: FileResult = coldResults.find(r => r.path === f.path)!;
+        const result = { ...coldResult, ...await this.runFile(f) };
         this._currentFile = undefined;
         return result;
       }));
@@ -130,7 +139,7 @@ export class Runner implements RunnerLike {
       path: realPath,
     };
     this._currentFile = fileTest;
-    events.emit('runFile', this, fileTest);
+    events.emit(new Event('runFile', { runner: this, file: fileTest }));
 
     const fileResult: FileResult = {
       path: realPath,
@@ -154,7 +163,7 @@ export class Runner implements RunnerLike {
     }
     fileTest.classes.push(...findedTests);
 
-    events.emit('fileParsed', this, fileTest);
+    events.emit(new Event('fileParsed', { runner: this, file: fileTest }));
 
     const results: ClassResult[] = await Promise.all(fileTest.classes.map(async cls => {
       if (cls.skip) {
@@ -181,7 +190,7 @@ export class Runner implements RunnerLike {
     } else {
       fileResult.result = Status.BROKEN;
     }
-    events.emit('fileResult', this, fileResult);
+    events.emit(new Event('fileResult', { runner: this, result: fileResult }));
     return fileResult;
   }
   /**
@@ -215,7 +224,7 @@ export class Runner implements RunnerLike {
     const classMetaValue: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, ctor.prototype);
     const mergedTest: ClassTest = { ...classTest, ...classMetaValue };
     Reflect.defineMetadata(metadata.CLASS_KEY, mergedTest, ctor.prototype)
-    events.emit('runClass', this, mergedTest);
+    events.emit(new Event('runClass', { runner: this, class: mergedTest }));
     const beforeAllResults = await this._runHooks(mergedTest, Kind.beforeAll);
     const results = await Promise.all(mergedTest.tests.map(async test => {
       return await this.runClassTest(ctor, test.name as keyof Internal.Ctor);
@@ -242,7 +251,7 @@ export class Runner implements RunnerLike {
     }
     result.metadata = mergedTest.metadata;
 
-    events.emit('classResult', this, mergedTest, result);
+    events.emit(new Event('classResult', { runner: this, class: mergedTest, result }));
     return result;
   }
 
@@ -280,7 +289,7 @@ export class Runner implements RunnerLike {
       metadata: findedTest.metadata,
     };
 
-    events.emit('classMethod', this, classTest, findedTest);
+    events.emit(new Event('classMethod', { runner: this, class: classTest, test: findedTest }));
 
     const isHaveHooks = !!findedTest.hooks && Array.isArray(findedTest.hooks) && findedTest.hooks.length !== 0;
 
@@ -297,7 +306,7 @@ export class Runner implements RunnerLike {
           ...findedTest.hooks!.filter(h => h.kind === 'afterEach').map(h => ({ ...h, result: 'skipped', }) as TestResult)
         ]
       }
-      events.emit('classMethodResult', this, classTest, findedTest, skippedResult);
+      events.emit(new Event('classMethodResult', { runner: this, class: classTest, test: findedTest, result: skippedResult }));
       return skippedResult;
     }
 
@@ -307,7 +316,7 @@ export class Runner implements RunnerLike {
         .filter(h => !h.skip && h.kind === 'beforeEach');
 
       const beforeEachResults = await Promise.all(definedBeforeEachHook.map(async hook => {
-        events.emit('classEachHook', this, classTest, findedTest, hook);
+        events.emit(new Event('classEachHook', { runner: this, class: classTest, test: findedTest, hook }));
         const result = await this._runFunction.call(instance, hook.fn, []);
         // beforeEach: append metadata 
         const newMetadata: Hook[] = Reflect.getMetadata(metadata.HOOK_KEY, ctor.prototype);
@@ -315,7 +324,7 @@ export class Runner implements RunnerLike {
         if (hookTest) {
           result.metadata = hookTest.metadata;
         }
-        events.emit('classEachHookResult', this, classTest, findedTest, hook, result);
+        events.emit(new Event('classEachHookResult', { runner: this, class: classTest, test: findedTest, hook, result }));
 
         return result;
       }));
@@ -344,7 +353,7 @@ export class Runner implements RunnerLike {
       const definedAfterEachHook = findedTest.hooks!
         .filter(h => !h.skip && h.kind === 'afterEach');
       const afterEachResults = await Promise.all(definedAfterEachHook.map(async hook => {
-        events.emit('classEachHook', this, classTest, findedTest, hook);
+        events.emit(new Event('classEachHook', { runner: this, class: classTest, test: findedTest, hook }));
         const result = await this._runFunction.call(instance, hook.fn, []);
 
         // afterEach: append metadata
@@ -354,7 +363,7 @@ export class Runner implements RunnerLike {
           result.metadata = testWithMetadata.metadata;
         }
 
-        events.emit('classEachHookResult', this, classTest, findedTest, hook, result);
+        events.emit(new Event('classEachHookResult', { runner: this, class: classTest, test: findedTest, hook, result }));
         return result;
       }));
       result.hooks?.push(...afterEachResults)
@@ -369,7 +378,7 @@ export class Runner implements RunnerLike {
       }
     }
 
-    events.emit('classMethodResult', this, classTest, findedTest, result);
+    events.emit(new Event('classMethodResult', { runner: this, class: classTest, test: findedTest, result }));
 
     return result;
   }
@@ -383,7 +392,7 @@ export class Runner implements RunnerLike {
     const result: TestResult[] = [];
     skippedHooks.forEach(k => result.push({ result: Status.SKIPPED, name: k.name, isHook: true, kind: k.kind }));
     const hookRunResult: TestResult[] = await Promise.all(runnedHooks.map(async h => {
-      events.emit('classHook', this, classTest, h);
+      events.emit(new Event('classHook', { runner: this, class: classTest, hook: h }));
       const result = await this._runFunction.call(isntance, h.fn!);
 
       // global hook: append result
@@ -394,7 +403,7 @@ export class Runner implements RunnerLike {
       }
 
       const hookResult = { ...result, isHook: true, name: h.name, kind: h.kind, stop: Date.now(), };
-      events.emit('classMethodResult', this, classTest, h, hookResult);
+      events.emit(new Event('classMethodResult', { runner: this, class: classTest, hook: h, result: hookResult }));
       // const attachments: { name: string, attachment: Attachment }[] = Reflect.getMetadata(metadata.ATTACHMENT_KEY, isntance as object)
       return { ...hookResult, name: h.name };
     }));
@@ -421,7 +430,7 @@ export class Runner implements RunnerLike {
     const classTest: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, ctor.prototype)
     if (!metaInstance) {
       const instance = Reflect.construct(ctor, []);
-      events.emit('classConstructor', this, classTest, instance);
+      events.emit(new Event('classConstructor', { runner: this, class: classTest, instance }));
       return instance;
     }
     return metaInstance;

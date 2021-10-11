@@ -23,55 +23,55 @@ export abstract class Reporter {
   constructor() {
     // subscribe to all events
     // runner
-    events.subscribe('runnerInit', async (r, cwd) => {
-      await this.onRunnerInit(r, cwd);
+    events.subscribe('runnerInit', async ({ cwd, runner }) => {
+      await this.onRunnerInit(runner, cwd);
     });
     // file evetns
-    events.subscribe('fileResult', async (runner, result) => {
+    events.subscribe('fileResult', async ({ result, runner }) => {
       await this.onFileResult(result, runner);
     });
-    events.subscribe('fileParsed', async (runner, result) => {
+    events.subscribe('fileParsed', async ({ result, runner }) => {
       await this.onFileParse(result, runner);
     });
-    events.subscribe('runFile', async (runner, file) => {
+    events.subscribe('runFile', async ({ file, runner }) => {
       await this.onFileRun(file, runner);
     });
     // class events. 12 events total
-    events.subscribe('runClass', async (runner, clas) => {
-      await this.onClassRun(clas, runner);
+    events.subscribe('runClass', async ({ runner, test }) => {
+      await this.onClassRun(test, runner);
     });
-    events.subscribe('classConstructor', async (runner, test, instance) => {
+    events.subscribe('classConstructor', async ({ instance, runner, test }) => {
       await this.onClassConstructor(test, instance, runner)
     });
-    events.subscribe('classHook', async (runner, cls, hook) => {
-      await this.onClassHook(hook, cls, runner);
+    events.subscribe('classHook', async (payload) => {
+      await this.onClassHook(payload.hook, payload.class, payload.runner);
     });
-    events.subscribe('classMetadata', async (cls, metadata) => {
-      await this.onClassMetadata(cls, metadata);
+    events.subscribe('classMetadata', async (payload) => {
+      await this.onClassMetadata(payload.class, payload.metadata);
     });
-    events.subscribe('classHookMetadata', async (cls, test, metadata) => {
-      await this.onClassHookMetadata(cls, test, metadata);
+    events.subscribe('classHookMetadata', async (payload) => {
+      await this.onClassHookMetadata(payload.class, payload.hook, payload.metadata);
     });
-    events.subscribe('classMethod', async (runner, cls, test) => {
-      await this.onTestRun(test, cls, runner)
+    events.subscribe('classMethod', async (payload) => {
+      await this.onTestRun(payload.test, payload.class, payload.runner);
     });
-    events.subscribe('classMethodMetadata', async (cls, test, metadata) => {
-      await this.onTestMetadata(cls, test, metadata)
+    events.subscribe('classMethodMetadata', async (payload) => {
+      await this.onTestMetadata(payload.class, payload.test, payload.metadata)
     });
-    events.subscribe('classMethodResult', async (runner, cls, test, result) => {
-      await this.onTestResult(result, test, cls, runner);
+    events.subscribe('classMethodResult', async (payload) => {
+      await this.onTestResult(payload.result, payload.test, payload.class, payload.runner);
     });
-    events.subscribe('classEachHookResult', async (runner, cls, test, hook, result) => {
-      await this.onTestEachHookResult(result, hook, test, cls, runner);
+    events.subscribe('classEachHookResult', async (payload) => {
+      await this.onTestEachHookResult(payload.result, payload.hook, payload.test, payload.class, payload.runner);
     });
-    events.subscribe('classEachHook', async (runner, cls, test, hook) => {
-      await this.onClassEachHook(hook, test, cls, runner);
+    events.subscribe('classEachHook', async (payload) => {
+      await this.onClassEachHook(payload.hook, payload.test, payload.class, payload.runner);
     });
-    events.subscribe('classHookResult', async (runner, cls, hook, result) => {
-      await this.onclassHookResult(result, hook, cls, runner)
+    events.subscribe('classHookResult', async (payload) => {
+      await this.onclassHookResult(payload.result, payload.hook, payload.class, payload.runner)
     });
-    events.subscribe('classResult', async (runner, cls, result) => {
-      await this.onClassResult(result, cls, runner);
+    events.subscribe('classResult', async (payload) => {
+      await this.onClassResult(payload.result, payload.class, payload.runner);
     });
   }
   // TODO: add docs for each method
