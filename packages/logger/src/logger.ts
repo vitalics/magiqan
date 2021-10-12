@@ -2,9 +2,9 @@ import chalk = require('chalk');
 import log = require('loglevel');
 import prefix = require('loglevel-plugin-prefix');
 import type { LogLevelDesc } from 'loglevel';
-
 import type { Logger } from '@magiqan/types';
-import events, { Event } from '@magiqan/events';
+import { events } from '@magiqan/events';
+
 import { LogEvent } from './event';
 
 const colors = {
@@ -30,8 +30,8 @@ export default function logger(namespace: string, level: LogLevelDesc = 'info'):
   prefix.apply(loggers[namespace], {
     format(level, name, timestamp) {
       const message = colors[level as keyof typeof colors](level);
-      events.emit(new LogEvent({ namespace, message }))
-      return `${chalk.gray(`[${timestamp}]`)} ${message} ${chalk.green(`${name}:`)}`;
+      events.emit(new LogEvent({ namespace, message, timestamp }))
+      return `${chalk.gray(`[${timestamp.toISOString()}]`)} ${message} ${chalk.green(`${name}:`)}`;
     },
   });
 

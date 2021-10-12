@@ -1,6 +1,6 @@
 import { Event } from '@magiqan/events';
 
-type LogPayload = { namespace: string, message: string, args?: any[] }
+type LogPayload = { namespace: string, timestamp: Date, message: string, args?: any[] }
 
 export class LogEvent extends Event<LogPayload> {
   constructor(

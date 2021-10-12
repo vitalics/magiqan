@@ -1,12 +1,11 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import 'reflect-metadata';
 import { SHARE_ENV, Worker } from 'worker_threads';
 import { resolve } from 'path';
 import { types, promisify } from 'util';
 import { setTimeout } from 'timers';
 
-
-import 'reflect-metadata';
 import glob = require('glob');
-
 import type {
   Test, TestResult,
   FileResult,
@@ -23,7 +22,7 @@ import {
   Status,
 } from '@magiqan/constants';
 import { events, Event } from '@magiqan/events';
-import logger from '@magiqan/logger';
+import { logger } from '@magiqan/logger';
 
 import delay from './delay';
 
@@ -61,7 +60,7 @@ export class Runner implements RunnerLike {
   }
   async addGlob(globPattern: string) {
     const paths = await globAsync(globPattern);
-    paths.forEach((f) => this._appendFile(f));
+    paths.forEach(f => this._appendFile(f));
   }
   addFiles(filePaths: string[]) {
     filePaths.forEach(this._appendFile)
@@ -130,7 +129,7 @@ export class Runner implements RunnerLike {
     if (!this._hasInitBefore) {
       this._init();
     }
-    let realPath: string = '';
+    let realPath = '';
     if (!isFileTest(filePathOrTest)) {
       realPath = resolve(this.cwd, filePathOrTest);
     } else {
@@ -274,6 +273,7 @@ export class Runner implements RunnerLike {
    */
   async runClassTest<
     Cls extends Internal.Ctor,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     M extends keyof Cls['prototype']
   >(ctor: Cls, method: M): Promise<TestResult> {
@@ -285,6 +285,7 @@ export class Runner implements RunnerLike {
     const classTest: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, ctor.prototype);
 
     const findedTest = classTest.tests.find(t => t.name === method);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     log.debug('<= Runner.runClassTest() %o', findedTest!);
     if (findedTest === undefined) {
       throw new Error(`${ctor.name} is no marked with @test() decorator`);

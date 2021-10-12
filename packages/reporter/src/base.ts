@@ -1,4 +1,4 @@
-import events from '@magiqan/events';
+import { events } from '@magiqan/events';
 import type {
   ClassResult, ClassTest,
   FileResult, FileTest,
@@ -37,40 +37,40 @@ export abstract class Reporter {
       await this.onFileRun(file, runner);
     });
     // class events. 12 events total
-    events.subscribe('runClass', async ({ runner, test }) => {
-      await this.onClassRun(test, runner);
+    events.subscribe('runClass', async payload => {
+      await this.onClassRun(payload.class, payload.runner);
     });
-    events.subscribe('classConstructor', async ({ instance, runner, test }) => {
-      await this.onClassConstructor(test, instance, runner)
+    events.subscribe('classConstructor', async payload => {
+      await this.onClassConstructor(payload.class, payload.instance, payload.runner)
     });
-    events.subscribe('classHook', async (payload) => {
+    events.subscribe('classHook', async payload => {
       await this.onClassHook(payload.hook, payload.class, payload.runner);
     });
-    events.subscribe('classMetadata', async (payload) => {
+    events.subscribe('classMetadata', async payload => {
       await this.onClassMetadata(payload.class, payload.metadata);
     });
-    events.subscribe('classHookMetadata', async (payload) => {
+    events.subscribe('classHookMetadata', async payload => {
       await this.onClassHookMetadata(payload.class, payload.hook, payload.metadata);
     });
-    events.subscribe('classMethod', async (payload) => {
+    events.subscribe('classMethod', async payload => {
       await this.onTestRun(payload.test, payload.class, payload.runner);
     });
-    events.subscribe('classMethodMetadata', async (payload) => {
+    events.subscribe('classMethodMetadata', async payload => {
       await this.onTestMetadata(payload.class, payload.test, payload.metadata)
     });
-    events.subscribe('classMethodResult', async (payload) => {
+    events.subscribe('classMethodResult', async payload => {
       await this.onTestResult(payload.result, payload.test, payload.class, payload.runner);
     });
-    events.subscribe('classEachHookResult', async (payload) => {
+    events.subscribe('classEachHookResult', async payload => {
       await this.onTestEachHookResult(payload.result, payload.hook, payload.test, payload.class, payload.runner);
     });
-    events.subscribe('classEachHook', async (payload) => {
+    events.subscribe('classEachHook', async payload => {
       await this.onClassEachHook(payload.hook, payload.test, payload.class, payload.runner);
     });
-    events.subscribe('classHookResult', async (payload) => {
+    events.subscribe('classHookResult', async payload => {
       await this.onclassHookResult(payload.result, payload.hook, payload.class, payload.runner)
     });
-    events.subscribe('classResult', async (payload) => {
+    events.subscribe('classResult', async payload => {
       await this.onClassResult(payload.result, payload.class, payload.runner);
     });
   }

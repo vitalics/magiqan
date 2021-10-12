@@ -1,13 +1,20 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createWriteStream, WriteStream } from 'fs';
 import { resolve } from 'path';
 
-import type { RunnerLike } from '@magiqan/types';
+import type {
+  ClassResult, ClassTest,
+  FileResult, FileTest,
+  Test, TestResult,
+  Hook, RunnerLike,
+} from '@magiqan/types';
 
 import { Reporter } from './base';
 
-export abstract class FileReporter extends Reporter {
+export class FileReporter extends Reporter {
   protected _stream: WriteStream | null = null;
-  protected file: string = '';
+  protected file = '';
   constructor(readonly filePath: string) {
     super();
   }
@@ -18,4 +25,20 @@ export abstract class FileReporter extends Reporter {
   async generate(data?: any) {
     this._stream?.end(data);
   }
+  // inheritance. 
+  onFileRun(_file: FileTest, _runner: RunnerLike): void { }
+  onFileParse(_file: FileTest, _runner: RunnerLike): void { }
+  onFileResult(_result: FileResult, _runner: RunnerLike): void | Promise<void> { }
+  onClassRun(_cls: ClassTest, _runner: RunnerLike): void { }
+  onClassConstructor(_cls: ClassTest, _instance: any, _runner: RunnerLike): void { }
+  onClassHook(_hook: Hook, _cls: ClassTest, _runner: RunnerLike): void { }
+  onClassResult(_result: ClassResult, _cls: ClassTest, _runner: RunnerLike): void { }
+  onTestRun(_test: Test, _cls: ClassTest, _runner: RunnerLike): void { }
+  onTestResult(_result: TestResult, _test: Test, _cls: ClassTest, _runner: RunnerLike): void { }
+  onTestMetadata(_cls: ClassTest, _test: Test, _metadata: Record<string, unknown> | undefined): void { }
+  onTestEachHookResult(_result: TestResult, _hook: Hook, _test: Test, _cls: ClassTest, _runner: RunnerLike): void { }
+  onClassMetadata(_test: ClassTest, _metadata: Record<string, unknown> | undefined): void { }
+  onClassHookMetadata(_cls: ClassTest, _test: Hook, _metadata: Record<string, unknown> | undefined): void { }
+  onClassEachHook(_hook: Hook, _test: Test, _cls: ClassTest, _runner: RunnerLike): void { }
+  onclassHookResult(_result: TestResult, _hook: Hook, _cls: ClassTest, _runner: RunnerLike): void { }
 }

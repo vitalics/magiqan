@@ -6,6 +6,7 @@ export abstract class Profiler {
   protected readonly session: Session = new Session();
   constructor() {
     this.session.connect();
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.session.post('Profiler.enable', () => { });
   }
   abstract start(): void | Promise<void>;
@@ -16,6 +17,7 @@ export abstract class Profiler {
 export class CPUProfiler extends Profiler {
 
   start() {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.session.post('Profiler.start', () => { });
   }
   stop() {

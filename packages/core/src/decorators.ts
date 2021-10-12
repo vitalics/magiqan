@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 
 import { Kind } from '@magiqan/constants';
-
 import { defineTest, defineClassTest, defineInstance, defineHook } from '@magiqan/runtime';
 
 type Settings = {

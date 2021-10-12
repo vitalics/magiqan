@@ -13,8 +13,8 @@ export type Map = {
   readonly fileResult: Event<'fileResult', { runner: RunnerLike, result: FileResult }>;
   readonly runnerDestroy: Event<'runnerDestroy', { runner: RunnerLike, result: FileResult }>;
   // class events
-  readonly runClass: Event<'runClass', { runner: RunnerLike, test: ClassTest }>;
-  readonly classConstructor: Event<'classConstructor', { runner: RunnerLike, test: ClassTest, instance: any }>;
+  readonly runClass: Event<'runClass', { runner: RunnerLike, class: ClassTest }>;
+  readonly classConstructor: Event<'classConstructor', { runner: RunnerLike, class: ClassTest, instance: any }>;
   readonly classResult: Event<'classResult', { runner: RunnerLike, class: ClassTest, result: ClassResult }>;
   readonly classMetadata: Event<'classMetadata', { class: ClassTest, metadata: Record<string, unknown> }>;
   // hooks

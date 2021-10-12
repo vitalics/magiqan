@@ -1,4 +1,5 @@
 import type { Events as EventType } from '@magiqan/types';
+
 import { Events } from './events';
 import { Event } from './event';
 

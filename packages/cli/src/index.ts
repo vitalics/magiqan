@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import yargs = require('yargs/yargs');
 import { hideBin } from 'yargs/helpers';
-
 import { Runner } from '@magiqan/runner';
 import { JSONReporter } from '@magiqan/reporter';
 
@@ -9,9 +8,7 @@ const runner = new Runner(process.cwd());
 
 yargs(hideBin(process.argv))
   .command('run <grep>', 'run tests',
-    yargs => yargs.positional('grep', {
-      describe: 'file or regex pattern'
-    }).option('output', {
+    yargs => yargs.positional('grep', {describe: 'file or regex pattern'}).option('output', {
       alias: 'o',
       default: 'out.json'
     }),
