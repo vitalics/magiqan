@@ -1,11 +1,13 @@
 import type { Result as TestResult, Test } from './test'
 import type { Result as ClassResult, Class as ClassTest } from './class';
-import type { Result as FileResult, File as FileTest } from './file';
+import type { Result as FileResult, File as FileTest, File } from './file';
 import type { RunnerLike } from './runner';
 import type { Logger } from './logger';
 
 export type Map = {
   readonly runnerInit: Event<'runnerInit', { runner: RunnerLike, cwd: string }>;
+  readonly runnerRun: Event<'runnerRun', { runner: RunnerLike, files: File[] }>;
+  readonly runnerRunEnd: Event<'runnerRunEnd', { runner: RunnerLike, files: File[], results: FileResult[] }>;
   readonly log: Event<'log', { level: Logger, message: string, args?: unknown[] }>;
   // file events
   readonly runFile: Event<'runFile', { runner: RunnerLike, file: FileTest }>;

@@ -13,9 +13,8 @@ export class JSONReporter extends FileReporter {
     this._stream?.write('[');
   }
 
-  onFileResult(fileResult: FileResult) {
-    // add ',' symbol at the end of each object
-    const stringifyed = JSON.stringify(fileResult, null, 2) + ',';
+  onRunnerRunEnd(results: FileResult[]) {
+    const stringifyed = JSON.stringify(results, null, 2);
     this._stream?.write(stringifyed);
   }
   generate() {

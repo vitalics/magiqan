@@ -6,14 +6,14 @@ export type Class = {
   skip?: boolean;
   hooks: Hook[],
   tests: Test[];
-  ctor: Ctor,
+  ctor?: Ctor,
   metadata?: Record<string, unknown>;
 };
 
 export type Result = {
   name: string;
   results: TestResult[];
-  ctor: Ctor;
+  ctor?: Ctor;
   result: ResultKind;
   instance?: any;
   start?: number;

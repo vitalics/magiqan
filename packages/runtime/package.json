@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "Runtime utils and working with Reflect",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "example": "node -r ts-node/register ./src/typescript.ts"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,6 @@
     "@magiqan/errors": "file:../errors",
     "@magiqan/events": "file:../events",
     "@magiqan/types": "file:../types",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "0.1.13"
   }
 }

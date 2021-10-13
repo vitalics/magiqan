@@ -13,6 +13,7 @@ import type {
 import { Reporter } from './base';
 
 export class FileReporter extends Reporter {
+
   protected _stream: WriteStream | null = null;
   protected file = '';
   constructor(readonly filePath: string) {
@@ -26,6 +27,8 @@ export class FileReporter extends Reporter {
     this._stream?.end(data);
   }
   // inheritance. 
+  onRunnerRun(_files: FileTest[], _runner: RunnerLike): void | Promise<void> { }
+  onRunnerRunEnd(_results: FileResult[], _files: FileTest[], _runner: RunnerLike): void | Promise<void> { }
   onFileRun(_file: FileTest, _runner: RunnerLike): void { }
   onFileParse(_file: FileTest, _runner: RunnerLike): void { }
   onFileResult(_result: FileResult, _runner: RunnerLike): void | Promise<void> { }

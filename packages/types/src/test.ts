@@ -4,7 +4,7 @@ export type Hook = Omit<Test, 'hooks'>;
 
 export type Test = {
   kind: TestKind;
-  fn: Function,
+  fn?: Function,
   skip?: boolean;
   name: string | symbol;
   data?: any[],

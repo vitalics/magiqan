@@ -26,6 +26,12 @@ export abstract class Reporter {
     events.subscribe('runnerInit', async ({ cwd, runner }) => {
       await this.onRunnerInit(runner, cwd);
     });
+    events.subscribe('runnerRun', async ({ runner, files }) => {
+      await this.onRunnerRun(files, runner);
+    });
+    events.subscribe('runnerRunEnd', async ({ runner, files, results }) => {
+      await this.onRunnerRunEnd(results, files, runner);
+    });
     // file evetns
     events.subscribe('fileResult', async ({ result, runner }) => {
       await this.onFileResult(result, runner);
@@ -77,6 +83,8 @@ export abstract class Reporter {
   // TODO: add docs for each method
 
   abstract onRunnerInit(runner: RunnerLike, cwd: string): void | Promise<void>;
+  abstract onRunnerRun(files: FileTest[], runner: RunnerLike): void | Promise<void>;
+  abstract onRunnerRunEnd(results: FileResult[], files: FileTest[], runner: RunnerLike): void | Promise<void>;
   abstract onFileRun(file: FileTest, runner: RunnerLike): void | Promise<void>;
   abstract onFileParse(file: FileTest, runner: RunnerLike): void | Promise<void>;
   abstract onFileResult(result: FileResult, runner: RunnerLike): void | Promise<void>;
