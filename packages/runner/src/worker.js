@@ -18,6 +18,5 @@ const runner = new Runner();
 
 function returns(value, code = 1) {
   parentPort.postMessage(tranferable);
-  parentPort.close();
   return process.exit(code);
 };

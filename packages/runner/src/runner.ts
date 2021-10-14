@@ -23,6 +23,7 @@ import {
 } from '@magiqan/constants';
 import { events, Event } from '@magiqan/events';
 import { logger } from '@magiqan/logger';
+import type { Ctor } from '@magiqan/types/src/_internal';
 
 import delay from './delay';
 
@@ -30,9 +31,10 @@ const globAsync = promisify(glob);
 const defaultTimeout = 5000;
 const timeout = promisify(setTimeout);
 
-const log = logger('@magiqans/runner');
+const log = logger('@magiqan/runner', 'DEBUG');
 
 export class Runner implements RunnerLike {
+  private static _override_runner: RunnerLike | null = null;
   static timeout = defaultTimeout;
   constructor(readonly cwd = process.cwd()) { }
   private _allPaths: string[] = [];
@@ -45,6 +47,11 @@ export class Runner implements RunnerLike {
     this._hasInitBefore = true;
     log.debug('Runner._init()');
     events.emit(new Event('runnerInit', { runner: this, cwd: this.cwd }));
+  }
+
+  static override<C extends Ctor<RunnerLike, A>, A extends any[] = []>(runnerCtor: C, ...args: A) {
+    this._override_runner = Reflect.construct(runnerCtor, args);
+    return this;
   }
 
   setDefaultTimeout(timeout: number) {
@@ -72,6 +79,14 @@ export class Runner implements RunnerLike {
     this._allPaths.push(resolved);
   }
 
+  /**
+   * [Experimantal] run file in worker
+   * 
+   * @private
+   * @internal
+   * @return {*} 
+   * @memberof Runner
+   */
   async runAsync() {
     log.warn('Runner.runAsync() is experimantal, use Runner.run() method instead');
     if (!this._hasInitBefore) {
@@ -98,6 +113,9 @@ export class Runner implements RunnerLike {
     return results;
   }
   async run(): Promise<(FileResult | undefined)[]> {
+    if (Runner._override_runner) {
+      return Runner._override_runner.run();
+    }
     log.debug('Runner.run() %o', this._allPaths);
     if (!this._hasInitBefore) {
       this._init();
@@ -126,6 +144,10 @@ export class Runner implements RunnerLike {
   }
 
   async runFile(filePathOrTest: string | FileTest): Promise<FileResult | undefined> {
+    if (Runner._override_runner) {
+      return Runner._override_runner.runFile(filePathOrTest);
+    }
+
     log.debug(`Runner.runFile(${filePathOrTest})`);
     if (!this._hasInitBefore) {
       this._init();
@@ -205,7 +227,9 @@ export class Runner implements RunnerLike {
    * @memberof Runner
    */
   async runClass<R>(ctor: Internal.Ctor<R>): Promise<ClassResult> {
-
+    if (Runner._override_runner) {
+      return Runner._override_runner.runClass(ctor);
+    }
     if (!this._hasInitBefore) {
       this._init();
     }
@@ -278,6 +302,9 @@ export class Runner implements RunnerLike {
     // @ts-ignore
     M extends keyof Cls['prototype']
   >(ctor: Cls, method: M): Promise<TestResult> {
+    if (Runner._override_runner) {
+      return Runner._override_runner.runClassTest(ctor, String(method));
+    }
     if (!this._hasInitBefore) {
       this._init();
     }

@@ -6,32 +6,32 @@
       "result": "passed",
       "results": [
         {
-          "start": 1633954937844,
+          "start": 1634206879837,
           "result": "passed",
           "name": "beforeAll",
           "metadata": {
             "some key": "some value"
           },
-          "stop": 1633954937845,
+          "stop": 1634206879839,
           "isHook": true,
           "kind": "beforeAll"
         },
         {
           "kind": "test",
           "name": "someTest",
-          "start": 1633954937846,
+          "start": 1634206879840,
           "isHook": false,
           "result": "passed",
           "metadata": {
             "key": "value"
           },
-          "stop": 1633954937846
+          "stop": 1634206879841
         }
       ],
-      "start": 1633954937844,
+      "start": 1634206879834,
       "metadata": {},
-      "stop": 1633954937846
+      "stop": 1634206879842
     }
   ],
   "result": "passed"
-},]
+}]

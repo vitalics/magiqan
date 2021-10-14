@@ -1,11 +1,11 @@
 import type { Result as TestResult } from './test';
 import type { Result as ClassResult, } from './class';
-import type { Result as FileResult } from './file';
+import type { Result as FileResult, File as FileTest } from './file';
 import type { Ctor } from './_internal';
 
 export type RunnerLike = {
   run(): Promise<(FileResult | undefined)[]>;
-  runFile(filePath: string): Promise<FileResult | undefined>;
+  runFile(filePath: string | FileTest): Promise<FileResult | undefined>;
   /**
    * Run class which marked with `@testable`
    *

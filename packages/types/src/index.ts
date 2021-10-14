@@ -5,5 +5,5 @@ export type { Test, Result as TestResult, ResultKind, TestKind, Hook } from './t
 export * as Internal from './_internal';
 export * as Lifecycle from './lifecycle';
 export * as Events from './events';
+export * as Logger from './logger';
 export type { RunnerLike } from './runner';
-export type { Logger } from './logger';

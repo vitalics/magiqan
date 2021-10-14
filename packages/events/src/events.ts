@@ -7,6 +7,8 @@ export class Events<M extends Record<string, EventType.Event<string, {}>> = Even
   subscribe<Name extends keyof M, E extends EventType.Event<string, {}> = M[Name]>(name: Name, listener: Internal.Fn<void, [event: E['payload']]>) {
     return this.#emitter.on(String(name), listener);
   }
+  emit<Name extends keyof M = keyof M>(event: M[Name]): boolean;
+  emit<T>(event: EventType.Event<string, T>): boolean
   emit<T>(event: EventType.Event<string, T>) {
     return this.#emitter.emit(event.name, event.payload);
   }
