@@ -1,42 +1,40 @@
 [
   {
-    "path": "VM:60943",
-    "result": "passed",
+    "path": "VM:78557",
+    "result": "skipped",
     "results": [
       {
         "name": "SomeTest",
-        "result": "passed",
+        "result": "skipped",
         "results": [
           {
-            "start": 1634552219512,
-            "result": "passed",
+            "start": 1634554763849,
+            "result": "failed",
             "name": "beforeAll",
             "metadata": {
               "some key": "some value"
             },
-            "stop": 1634552219519,
+            "error": "Error: Unexpected\n    at SomeTest.beforeAll (/Users/vitaliharadkou/Documents/git/magiqan/examples/src/testFile.ts:14:11)\n    at SomeTest.runFunction (/Users/vitaliharadkou/Documents/git/magiqan/packages/runner/build/utils/function.js:17:21)\n    at /Users/vitaliharadkou/Documents/git/magiqan/packages/runner/build/utils/function.js:106:42\n    at Array.map (<anonymous>)\n    at Runner.runHooks (/Users/vitaliharadkou/Documents/git/magiqan/packages/runner/build/utils/function.js:104:57)\n    at Runner.runClassMethodWithHooks (/Users/vitaliharadkou/Documents/git/magiqan/packages/runner/build/utils/function.js:43:53)\n    at Runner.runClassTest (/Users/vitaliharadkou/Documents/git/magiqan/packages/runner/build/runner.js:301:64)\n    at run (/Users/vitaliharadkou/Documents/git/magiqan/examples/src/index.ts:10:16)\n    at Object.<anonymous> (/Users/vitaliharadkou/Documents/git/magiqan/examples/src/index.ts:35:1)\n    at Module._compile (internal/modules/cjs/loader.js:1072:14)",
+            "stop": 1634554763867,
             "isHook": true,
             "kind": "beforeAll"
           },
           {
             "name": "someTest",
-            "result": "passed",
-            "start": 1634552219511,
-            "metadata": {
-              "key": "value"
-            },
+            "result": "skipped",
+            "start": 1634554763848,
             "isHook": false,
             "kind": "test",
             "hooks": [],
-            "stop": 1634552219564
+            "stop": 1634554763868
           }
         ],
-        "start": 1634552219510,
-        "stop": 1634552221780
+        "start": 1634554763845,
+        "stop": 1634554771688
       }
     ],
     "isRetried": false,
-    "start": 1634552219510,
-    "stop": 1634552221780
+    "start": 1634554763845,
+    "stop": 1634554780738
   }
 ]

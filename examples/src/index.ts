@@ -7,8 +7,8 @@ export async function run() {
   const cwd = __dirname;
   const runner = new Runner(cwd);
   const reporter = new JSONReporter(`${cwd}/out.json`);
-  // const dot = new DotReporter();
   await runner.runClassTest(SomeTest, 'someTest');
+  // await runner.runClass(SomeTest);
   // runner.addFile('./testFile.ts');
   // // runner.addFile('./testFile.ts');
   // // experimantal workers

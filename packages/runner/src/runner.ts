@@ -26,6 +26,7 @@ import { events, Event } from '@magiqan/events';
 import { logger } from '@magiqan/logger';
 import type { Ctor, Fn } from '@magiqan/types/src/_internal';
 
+import { getClassDecision } from './utils/decision';
 import { constructInstanceIfNeeded, runClassMethodWithHooks, runHooks } from './utils';
 
 const globAsync = promisify(glob);
@@ -294,22 +295,7 @@ export class Runner extends EventEmitter implements RunnerLike {
     result.stop = Date.now();
     result.results.push(...[...beforeAllResults, ...results, ...afterAllResults]);
 
-    const isAnyHookFailed =
-      afterAllResults.some(r => r.result === 'failed')
-      || beforeAllResults.some(r => r.result === 'failed')
-      || results.some(r => r.hooks?.some(r => r.result === 'failed'));
-    const isAllTestsPassedExcludeSkipped = results.filter(r => r.result !== 'skipped').every(r => r.result === 'passed');
-
-    const isAllTestsSkipped = results.every(r => r.result === 'skipped');
-    if (isAllTestsPassedExcludeSkipped) {
-      result.result = Status.PASSED;
-    } else if (isAnyHookFailed) {
-      result.result = Status.BROKEN;
-    } else if (isAllTestsSkipped) {
-      result.result = Status.SKIPPED;
-    } else {
-      result.result = Status.BROKEN;
-    }
+    result.result = getClassDecision(result);
     result.metadata = mergedTest.metadata;
     log.debug('<= Runner.runClass() %o', mergedTest);
 
@@ -319,7 +305,7 @@ export class Runner extends EventEmitter implements RunnerLike {
   }
 
   /**
-   * Run class test which marked `@test` with `each` hooks
+   * Run class test which marked `@test` with `each` and `all` hooks
    *
    * @template Cls
    * @template M
@@ -377,7 +363,6 @@ export class Runner extends EventEmitter implements RunnerLike {
       // run method without global hooks
       testResult = await runClassMethodWithHooks.call(this, ctor, String(method), false);
     }
-
     // file test
     fileTest.classes[0].tests.push({
       kind: Kind.test,
@@ -396,13 +381,13 @@ export class Runner extends EventEmitter implements RunnerLike {
 
     // class result
     classResult.stop = Date.now();
-    classResult.result = testResult.result;
     classResult.results.push(testResult);
+    classResult.result = getClassDecision(classResult);
 
     // file result
     fileResult.stop = Date.now();
     fileResult.result = classResult.result;
-    fileResult.results.push(classResult);
+    fileResult.results[0] = classResult;
     this._fireRunnerEndEvent([fileTest], [fileResult]);
 
     return testResult;

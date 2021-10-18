@@ -4,7 +4,7 @@ import { Kind, metadata, Status } from '@magiqan/constants';
 import { events, Event } from '@magiqan/events';
 import type { TestResult, Internal, RunnerLike, ClassTest, Test, Hook } from '@magiqan/types';
 
-import { Runner } from '..';
+import { Runner } from '../runner';
 
 import { constructInstanceIfNeeded } from './construct';
 import delay from './delay';
@@ -13,13 +13,20 @@ export async function runFunction<A extends any[] = [], This = unknown>(this: Th
   const result = { start: Date.now(), result: Status.PENDING, name: '', metadata: undefined, } as TestResult;
   // NOTE: abort controller for nodejs@14 is experimental
   const abortController = new AbortController();
-  return Promise.race<TestResult>([
-    delay(Runner.timeout, abortController.signal),
-    Reflect.apply(fn, this || globalThis, args),
-  ]).then(() => {
-    abortController.abort();
+  try {
+    await Promise.race<TestResult>([
+      delay(Runner.timeout, abortController.signal),
+      Reflect.apply(fn, this || globalThis, args),
+    ]);
     return { ...result, result: Status.PASSED, stop: Date.now() } as TestResult;
-  });
+  } catch (error) {
+    if (error instanceof Error) {
+      return { ...result, result: Status.FAILED, error: error.stack, stop: Date.now() } as TestResult;
+    }
+    return { ...result, result: Status.FAILED, error, stop: Date.now() } as TestResult;
+  } finally {
+    abortController.abort();
+  }
 }
 
 export async function runClassMethodWithHooks<R>(this: RunnerLike, ctor: Internal.Ctor<R>, method: string, withGlobalHooks = false) {
