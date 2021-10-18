@@ -11,6 +11,7 @@ class Base {
   beforeAll() {
     this.metadata.defineMetadata('beforeAll', 'some key', 'some value')
     // console.log('before all');
+    throw new Error('Unexpected');
   }
 }
 
