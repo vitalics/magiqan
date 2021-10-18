@@ -4,7 +4,7 @@ import type { ResultKind, Test, Result as TestResult, Hook } from './test';
 export type Class = {
   name: string;
   skip?: boolean;
-  hooks: Hook[],
+  hooks?: Hook[],
   tests: Test[];
   ctor?: Ctor,
   metadata?: Record<string, unknown>;

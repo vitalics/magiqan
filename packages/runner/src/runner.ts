@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import 'reflect-metadata';
+import { EventEmitter } from 'events';
 import { SHARE_ENV, Worker } from 'worker_threads';
 import { resolve } from 'path';
 import { promisify } from 'util';
@@ -23,7 +24,7 @@ import {
 } from '@magiqan/constants';
 import { events, Event } from '@magiqan/events';
 import { logger } from '@magiqan/logger';
-import type { Ctor } from '@magiqan/types/src/_internal';
+import type { Ctor, Fn } from '@magiqan/types/src/_internal';
 
 import { constructInstanceIfNeeded, runClassMethodWithHooks, runHooks } from './utils';
 
@@ -33,22 +34,44 @@ const timeout = promisify(setTimeout);
 
 const log = logger('@magiqan/runner');
 
-export class Runner implements RunnerLike {
+export class Runner extends EventEmitter implements RunnerLike {
   private static _override_runner: RunnerLike | null = null;
   static timeout = defaultTimeout;
-  constructor(readonly cwd = process.cwd()) { }
+  constructor(readonly cwd = process.cwd()) {
+    super();
+  }
   private _allPaths: string[] = [];
   private _hasInitBefore = false;
   private _shouldFireEndEvent = false;
 
-
   protected _currentFile?: FileTest;
   protected _currentClass?: ClassTest;
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  on(eventName: 'runnerInit', listener: Fn<void, [{ runner: RunnerLike, cwd: string }]>): this;
+  on(eventName: 'runnerRun', listener: Fn<void, [{ runner: RunnerLike, files: FileTest[] }]>): this;
+  on(eventName: 'runnerRunEnd', listener: Fn<void, [{ runner: RunnerLike, files: FileTest[], results: FileResult[] }]>): this;
+  on(eventName: string, listener: Fn<void, [Record<string, unknown>]>): this;
+  on(eventName: string, listener: Fn<void, unknown[]>): this {
+    return super.on(eventName, listener);
+  }
+  emit(eventName: 'runnerInit', payload: { runner: RunnerLike, cwd: string }): boolean;
+  emit(eventName: 'runnerRun', payload: { runner: RunnerLike, files: FileTest[] }): boolean;
+  emit(eventName: 'runnerRunEnd', payload: { runner: RunnerLike, files: FileTest[], results: FileResult[] }): boolean;
+  emit(eventName: string, payload: Record<string, unknown>): boolean;
+  emit(eventName: string, payload: Record<string, unknown>): boolean {
+    const isEventNamesMatches = eventName === 'runnerInit' || eventName === 'runnerRun' || eventName === 'runnerRunEnd'
+    if (!isEventNamesMatches) {
+      throw new Error(`Runner.emit() only accept 'runnerInit', 'runnerRun' and 'runnerRunEnd' event`);
+    }
+    return events.emit(new Event(eventName, payload));
+  }
 
   private _init(): void {
     this._hasInitBefore = true;
     log.debug('Runner._init()');
-    events.emit(new Event('runnerInit', { runner: this, cwd: this.cwd }));
+    this.emit('runnerInit', { runner: this, cwd: this.cwd });
   }
 
   static override<C extends Ctor<RunnerLike, A>, A extends any[] = []>(runnerCtor: C, ...args: A) {
@@ -134,7 +157,7 @@ export class Runner implements RunnerLike {
     });
 
     const coldResults: FileResult[] = files.map(f => ({ path: f.path, start: Date.now(), result: Status.PENDING, results: [] }));
-    events.emit(new Event('runnerRun', { runner: this, files: coldResults }));
+    this.emit('runnerRun', { runner: this, files: coldResults });
     const results = await Promise.all(
       files.map(async f => {
         this._currentFile = f;
@@ -144,7 +167,6 @@ export class Runner implements RunnerLike {
         return result;
       }));
     this._fireRunnerEndEvent(files, results);
-    // events.emit(new Event('runnerRunEnd', { runner: this, files: coldResults, results }));
     return results;
   }
 
@@ -223,6 +245,7 @@ export class Runner implements RunnerLike {
       fileResult.result = Status.BROKEN;
     }
     events.emit(new Event('fileResult', { runner: this, result: fileResult }));
+    this._fireRunnerEndEvent([fileTest], [fileResult]);
     return fileResult;
   }
   /**
@@ -361,29 +384,35 @@ export class Runner implements RunnerLike {
       isHook: false,
       name: String(method),
       metadata: testResult.metadata,
-      hooks: testResult.hooks?.map(h => ({ isHook: true, kind: h.kind, name: h.name } as Hook)),
+      // remove global hooks from test result
+      hooks: testResult.hooks?.filter(h => h.kind === Kind.beforeEach || h.kind === Kind.afterEach).map(h => ({ isHook: true, kind: h.kind, name: h.name } as Hook)),
     });
+    // add global hooks to class result
+    const classHooks = testResult.hooks?.filter(h => h.kind === Kind.beforeAll || h.kind === Kind.afterAll);
+    if (classHooks && Array.isArray(classHooks)) {
+      classResult.results.push(...classHooks);
+    }
+    testResult.hooks = testResult.hooks?.filter(h => h.kind === Kind.beforeEach || h.kind === Kind.afterEach);
 
     // class result
     classResult.stop = Date.now();
     classResult.result = testResult.result;
-    classResult.results[0] = testResult;
+    classResult.results.push(testResult);
 
     // file result
     fileResult.stop = Date.now();
     fileResult.result = classResult.result;
-    fileResult.results[0] = classResult;
+    fileResult.results.push(classResult);
     this._fireRunnerEndEvent([fileTest], [fileResult]);
 
     return testResult;
   }
   private _fireRunnerEndEvent(files: FileTest[], results: FileResult[]) {
     if (this._shouldFireEndEvent) {
-      events.emit(new Event('runnerRunEnd', { runner: this, files, results }))
+      this.emit('runnerRunEnd', { runner: this, files, results });
     }
     this._shouldFireEndEvent = false;
   }
-
 }
 
 function isFileTest(testLike: unknown): testLike is FileTest {
@@ -392,5 +421,3 @@ function isFileTest(testLike: unknown): testLike is FileTest {
   }
   return false;
 }
-
-

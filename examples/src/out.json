@@ -1,6 +1,6 @@
-[[
+[
   {
-    "path": "VM:27695",
+    "path": "VM:60943",
     "result": "passed",
     "results": [
       {
@@ -8,23 +8,35 @@
         "result": "passed",
         "results": [
           {
+            "start": 1634552219512,
+            "result": "passed",
+            "name": "beforeAll",
+            "metadata": {
+              "some key": "some value"
+            },
+            "stop": 1634552219519,
+            "isHook": true,
+            "kind": "beforeAll"
+          },
+          {
             "name": "someTest",
             "result": "passed",
-            "start": 1634543741334,
+            "start": 1634552219511,
             "metadata": {
               "key": "value"
             },
             "isHook": false,
             "kind": "test",
-            "stop": 1634543741381
+            "hooks": [],
+            "stop": 1634552219564
           }
         ],
-        "start": 1634543741332,
-        "stop": 1634543756360
+        "start": 1634552219510,
+        "stop": 1634552221780
       }
     ],
     "isRetried": false,
-    "start": 1634543741332,
-    "stop": 1634543756360
+    "start": 1634552219510,
+    "stop": 1634552221780
   }
-]]
+]

@@ -10,7 +10,6 @@ export class JSONReporter extends FileReporter {
 
   onRunnerInit(_runner: RunnerLike, cwd: string) {
     super.onRunnerInit(_runner, cwd);
-    this._stream?.write('[');
   }
 
   onRunnerRunEnd(results: FileResult[]) {
@@ -18,6 +17,6 @@ export class JSONReporter extends FileReporter {
     this._stream?.write(stringifyed);
   }
   generate() {
-    return super.generate(']');
+    return super.generate();
   }
 }

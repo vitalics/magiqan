@@ -33,7 +33,7 @@ export async function runClassMethodWithHooks<R>(this: RunnerLike, ctor: Interna
 
   const result: TestResult = { name: method, result: Status.PENDING, start: Date.now(), metadata: undefined, isHook: false, kind: Kind.test };
 
-  const isHaveAnyHooks = test.hooks && Array.isArray(test.hooks) && test.hooks.length > 0;
+  const isHaveAnyHooks = (test.hooks && Array.isArray(test.hooks) && test.hooks.length > 0) || (classTest.hooks && Array.isArray(classTest.hooks) && classTest.hooks.length > 0);
 
   if (isHaveAnyHooks) {
     if (withGlobalHooks) {
@@ -101,7 +101,10 @@ export async function runHooks(this: RunnerLike, classTest: ClassTest, kind: Tes
 
   const isntance = constructInstanceIfNeeded.call(this, classTest.ctor!);
   const classMetaValue: ClassTest = Reflect.getMetadata(metadata.CLASS_KEY, classTest.ctor!.prototype);
-  const hooks = classMetaValue.hooks.filter(h => h.kind === kind);
+  const hooks = classMetaValue.hooks?.filter(h => h.kind === kind);
+  if (!hooks) {
+    return [];
+  }
   const skippedHooks = hooks.filter(h => h.skip);
   const runnedHooks = hooks.filter(h => !h.skip);
   const result: TestResult[] = [];
