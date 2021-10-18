@@ -12,6 +12,7 @@
         "<node_internals>/**"
       ],
       "args": [
+        "--experimental-abortcontroller",
         "-r",
         "ts-node/register",
         "${workspaceFolder}/examples/src/index.ts"

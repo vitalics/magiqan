@@ -5,7 +5,7 @@ import { events, Event } from '@magiqan/events';
 import type { ClassTest, Hook, Test } from '@magiqan/types';
 
 export function defineInstance(instance: any, target: any) {
-  Reflect.defineMetadata(metadata.INSTANCE_KEY, instance, target.prototype);
+  Reflect.defineMetadata(metadata.INSTANCE_KEY, instance, target);
 }
 
 export function defineClassMetadata(ctor: any, metadataValue: Record<string, unknown>) {

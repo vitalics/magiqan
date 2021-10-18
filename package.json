@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "start": "node -e 'console.log(`Hello`)'",
-    "example": "node -r ts-node/register examples/src/index.ts",
+    "example": "node --no-warnings --experimental-abortcontroller -r ts-node/register examples/src/index.ts",
     "lint": "eslint packages/**/*.ts",
     "build": "npm run build:constants & npm run build:types & npm run build:core & npm run build:events & npm run build:errors & npm run build:reporter & npm run build:runner & npm run build:cli",
     "build:cli": "npm run build --prefix packages/cli",

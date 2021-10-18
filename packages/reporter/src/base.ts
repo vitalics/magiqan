@@ -21,6 +21,7 @@ export abstract class Reporter {
   abstract generate(): Promise<void>;
 
   constructor() {
+    let runnerEndFired = false;
     // subscribe to all events
     // runner
     events.subscribe('runnerInit', async ({ cwd, runner }) => {
@@ -30,7 +31,10 @@ export abstract class Reporter {
       await this.onRunnerRun(files, runner);
     });
     events.subscribe('runnerRunEnd', async ({ runner, files, results }) => {
-      await this.onRunnerRunEnd(results, files, runner);
+      if (!runnerEndFired) {
+        await this.onRunnerRunEnd(results, files, runner);
+        runnerEndFired = true;
+      }
     });
     // file evetns
     events.subscribe('fileResult', async ({ result, runner }) => {
