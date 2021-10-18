@@ -9,9 +9,7 @@ TODO:
 - define ci
 - release package to npm/github
 - automatic release notes generation
-- husky
 - unit testing
-- eslint
 - design high-level api/functions
 - Tap reporter
 - Cucumber support
