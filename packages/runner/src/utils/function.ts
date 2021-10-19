@@ -1,5 +1,7 @@
 import 'reflect-metadata';
+import { types } from 'util';
 
+import { AbortController } from 'node-abort-controller';
 import { Kind, metadata, Status } from '@magiqan/constants';
 import { events, Event } from '@magiqan/events';
 import type { TestResult, Internal, RunnerLike, ClassTest, Test, Hook } from '@magiqan/types';
@@ -14,9 +16,18 @@ export async function runFunction<A extends any[] = [], This = unknown>(this: Th
   // NOTE: abort controller for nodejs@14 is experimental
   const abortController = new AbortController();
   try {
-    await Promise.race<TestResult>([
+    await Promise.race([
       delay(Runner.timeout, abortController.signal),
-      Reflect.apply(fn, this || globalThis, args),
+      new Promise((res, rej) => {
+        (abortController.signal as any).addEventListener('abort', () => rej(new Error('aborted')));
+        if (types.isAsyncFunction(fn)) {
+          const promise = Reflect.apply(fn, this || globalThis, args) as Promise<TestResult>;
+          promise.then(res, rej);
+        } else {
+          Reflect.apply(fn, this || globalThis, args);
+          res(true);
+        }
+      })
     ]);
     return { ...result, result: Status.PASSED, stop: Date.now() } as TestResult;
   } catch (error) {

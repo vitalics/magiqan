@@ -1,0 +1,40 @@
+{
+  "name": "@magiqan/tests",
+  "version": "1.0.0",
+  "description": "e2e tests which describes high level cases",
+  "private": true,
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": "./build/index.js",
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magiqans/magiqan.git",
+    "directory": "packages/tests"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/magiqans/magiqan/issues"
+  },
+  "homepage": "https://github.com/magiqans/magiqan#readme",
+  "scripts": {
+    "test": "npx jest"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^27.0.2",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.3.0",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@magiqan/constants": "file:../constants",
+    "@magiqan/core": "file:../core",
+    "@magiqan/runner": "file:../runner",
+    "@magiqan/types": "file:../types"
+  }
+}

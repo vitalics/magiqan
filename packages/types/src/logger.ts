@@ -39,7 +39,7 @@ export type Logger = {
   warn<S extends string, A extends ParsePrintFormat<S>>(message: S, ...args: A): void;
 };
 
-export type LogLevel = 'INFO' | 'LOG' | 'DEBUG' | 'ERROR' | 'TRACE' | 'WARN' | 'SILENT';
+export type LogLevel = 'INFO' | 'DEBUG' | 'ERROR' | 'TRACE' | 'WARN' | 'SILENT';
 
 // Formatter types. Do not modify!
 

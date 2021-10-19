@@ -35,7 +35,7 @@ export default function logger(namespace: string, level: Logger.LogLevel = 'INFO
     return loggers[namespace];
   }
   loggers[namespace] = log.getLogger(namespace);
-  loggers[namespace].setLevel(level);
+  loggers[namespace].setLevel(level as log.LogLevelDesc);
 
   prefix.apply(loggers[namespace], {
     format(level, name, timestamp) {

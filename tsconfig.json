@@ -2,11 +2,11 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    // Object.fromEntries
     "lib": [
       "es2017",
       "es2019.object"
     ],
+    "incremental": true,
     "declaration": true,
     "composite": true,
     "isolatedModules": true,

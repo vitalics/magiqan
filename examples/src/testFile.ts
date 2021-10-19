@@ -11,7 +11,7 @@ class Base {
   beforeAll() {
     this.metadata.defineMetadata('beforeAll', 'some key', 'some value')
     // console.log('before all');
-    throw new Error('Unexpected');
+    // throw new Error('Unexpected');
   }
 }
 
@@ -20,7 +20,7 @@ export class SomeTest extends Base {
   @test()
   async someTest() {
     // console.log('some test');
-    await delay(40, 'qwe', {});
+    await delay(4000, 'qwe', {});
     this.metadata.defineMetadata('someTest', 'key', 'value')
   }
 

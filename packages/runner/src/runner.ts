@@ -6,7 +6,8 @@ import { resolve } from 'path';
 import { promisify } from 'util';
 import { setTimeout } from 'timers';
 
-import glob = require('glob');
+// eslint-disable-next-line import/no-named-as-default
+import glob from 'glob';
 import type {
   TestResult,
   FileResult,
@@ -92,8 +93,11 @@ export class Runner extends EventEmitter implements RunnerLike {
     this._appendFile(filePath);
   }
   async addGlob(globPattern: string) {
-    const paths = await globAsync(globPattern);
-    paths.forEach(f => this._appendFile(f));
+    globAsync(globPattern).then(
+      paths => {
+        paths.forEach((f: string) => this._appendFile(f));
+      }
+    );
   }
   addFiles(filePaths: string[]) {
     filePaths.forEach(this._appendFile)
@@ -314,12 +318,7 @@ export class Runner extends EventEmitter implements RunnerLike {
    * @return {*}  {Promise<TestResult>}
    * @memberof Runner
    */
-  async runClassTest<
-    Cls extends Internal.Ctor,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    M extends keyof Cls['prototype']
-  >(ctor: Cls, method: M): Promise<TestResult> {
+  async runClassTest<Cls extends Internal.Ctor, M extends keyof Cls>(ctor: Cls, method: M): Promise<TestResult> {
     if (Runner._override_runner) {
       return Runner._override_runner.runClassTest(ctor, String(method));
     }

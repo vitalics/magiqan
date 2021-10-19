@@ -3,25 +3,31 @@
   "private": true,
   "version": "0.0.0",
   "workspaces": [
-    "packages/*"
+    "packages/cli",
+    "packages/config",
+    "packages/constants",
+    "packages/core",
+    "packages/errors",
+    "packages/events",
+    "packages/logger",
+    "packages/profiler",
+    "packages/reporter",
+    "packages/runner",
+    "packages/runtime",
+    "packages/types",
+    "packages/tests"
   ],
   "scripts": {
     "start": "node -e 'console.log(`Hello`)'",
     "example": "node --no-warnings --experimental-abortcontroller -r ts-node/register examples/src/index.ts",
-    "lint": "eslint packages/**/*.ts",
-    "build": "npm run build:constants & npm run build:types & npm run build:core & npm run build:events & npm run build:errors & npm run build:reporter & npm run build:runner & npm run build:cli",
-    "build:cli": "npm run build --prefix packages/cli",
-    "build:constants": "npm run build --prefix packages/constants",
-    "build:core": "npm run build --prefix packages/core",
-    "build:errors": "npm run build --prefix packages/errors",
-    "build:events": "npm run build --prefix packages/events",
-    "build:reporter": "npm run build --prefix packages/reporter",
-    "build:runner": "npm run build --prefix packages/runner",
-    "build:types": "npm run build --prefix packages/types",
+    "lint": "npx eslint packages/**/*.ts",
+    "build": "npm run build -ws --if-present",
+    "test": "npm run test -ws --if-present",
     "prepare": "husky install"
   },
   "engines": {
-    "node": "^14.15.0 || >=15.0.0"
+    "node": "^14.15.0 || >=15.0.0",
+    "npm": ">=7"
   },
   "author": "",
   "license": "ISC",

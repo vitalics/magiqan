@@ -43,11 +43,11 @@ export function createClassTest(classTest: ClassTest) {
     /** generics */[],
     [],
     [
-      ...classTest.hooks.map(hook => {
+      ...(classTest.hooks!.map(hook => {
         return createClassMethod(String(hook.name), [
           createDecorator(hook.kind)]
         );
-      }),
+      }) || []),
       ...classTest.tests.map(test => {
         return createClassMethod(String(test.name), [
           createDecorator(test.kind)]

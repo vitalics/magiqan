@@ -29,6 +29,10 @@
     "@magiqan/logger": "file:../logger",
     "@magiqan/types": "file:../types",
     "glob": "7.2.0",
-    "reflect-metadata": "^0.1.13"
+    "node-abort-controller": "^3.0.1",
+    "reflect-metadata": "0.1.13"
+  },
+  "devDependencies": {
+    "@types/glob": "7.1.4"
   }
 }
