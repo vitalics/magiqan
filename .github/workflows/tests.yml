@@ -36,6 +36,7 @@ jobs:
     - name: Retry Step
       uses: nick-invision/retry@v2.4.0
       with:
+        timeout_minutes: 1
         max_attempts: 3
         retry_on: error
         command: npm run build --if-present
