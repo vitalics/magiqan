@@ -24,6 +24,11 @@
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "typeRoots": [
+      "./typings",
+      "node_modules/@types"
+    ],
+
   },
   "exclude": [
     ".yarn/releases/*",

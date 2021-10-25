@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -27,6 +27,17 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: use npm@7
       run: npm i -g npm@7
-    - run: npm ci
-    - run: npm run build --if-present
+    - name: Environment info
+      run: |
+          echo "Node.js version: $(node --version)"
+          echo "npm version: $(npm --version)"
+    - name: Install dependencies for workspaces
+      run: npm install
+    - name: Build with retry
+      uses: nick-invision/retry@v2.4.0
+      with:
+        timeout_minutes: 5
+        max_attempts: 3
+        retry_on: error
+        command: npm run build --if-present
     - run: npm test --if-present
