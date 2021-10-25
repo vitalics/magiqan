@@ -33,5 +33,10 @@ jobs:
           echo "npm version: $(npm --version)"
     - name: Install dependencies for workspaces
       run: npm install
-    - run: npm run build --if-present
+    - name: Retry Step
+      uses: nick-invision/retry@v2.4.0
+      with:
+        max_attempts: 3
+        retry_on: error
+        command: npm run build --if-present
     - run: npm test --if-present
