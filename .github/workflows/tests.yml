@@ -33,7 +33,7 @@ jobs:
           echo "npm version: $(npm --version)"
     - name: Install dependencies for workspaces
       run: npm install
-    - name: Retry Step
+    - name: Build with retry
       uses: nick-invision/retry@v2.4.0
       with:
         timeout_minutes: 1
